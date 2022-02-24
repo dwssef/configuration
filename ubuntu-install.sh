@@ -1,5 +1,10 @@
 #!/bin/bash
 
+fzf_install {
+	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+	~/.fzf/install
+}
+
 function install {
   which $1 &> /dev/null
 
@@ -12,10 +17,9 @@ function install {
 }
 
 install vim
-install ctags
 install tmux
-install dtach
-install dstat
-install nmap
-install silversearcher-ag
+install ripgrep
+install openssh-server
+install git
+install fd-find
 

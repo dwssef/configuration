@@ -1,140 +1,13 @@
-"==========================================
-" Author:  wklken
-" Version: 9.1
-" Email: wklken@yeah.net
-" BlogPost: http://www.wklken.me
-" ReadMe: README.md
-" Donation: http://www.wklken.me/pages/donation.html
-" Last_modify: 2015-12-15
-" Sections:
-"       -> Initial Plugin 加载插件
-"       -> General Settings 基础设置
-"       -> Display Settings 展示/排版等界面格式设置
-"       -> FileEncode Settings 文件编码设置
-"       -> Others 其它配置
-"       -> HotKey Settings  自定义快捷键
-"       -> FileType Settings  针对文件类型的设置
-"       -> Theme Settings  主题设置
-"
-"       -> 插件配置和具体设置在vimrc.bundles中
-" Note: Don't put anything in your .vimrc you don't understand!
-"==========================================
-
-"==========================================
-" Initial Plugin 加载插件
-"==========================================
-
 " 修改leader键
 let mapleader = ','
 let g:mapleader = ','
 
-" 开启语法高亮
-syntax on
 
-" install bundles
-if filereadable(expand("~/.vimrc.bundles"))
-  source ~/.vimrc.bundles
-elseif filereadable(expand("~/.config/nvim/vimrc.bundles")) " neovim
-  source ~/.config/nvim/vimrc.bundles
-endif
-
-" ensure ftdetect et al work by including this after the bundle stuff
-filetype plugin indent on
-
-" NOTE: 以下配置有详细说明，一些特性不喜欢可以直接注解掉
-
-"==========================================
-" General Settings 基础设置
-"==========================================
-
-
-" history存储容量
-set history=2000
-
-" 检测文件类型
-filetype on
-" 针对不同的文件类型采用不同的缩进格式
-filetype indent on
-" 允许插件
-filetype plugin on
-" 启动自动补全
-filetype plugin indent on
-
-" 文件修改之后自动载入
-set autoread
-" 启动的时候不显示那个援助乌干达儿童的提示
-set shortmess=atI
-
-" 备份,到另一个位置. 防止误删, 目前是取消备份
-"set backup
-"set backupext=.bak
-"set backupdir=/tmp/vimbk/
-
-" 取消备份。 视情况自己改
-set nobackup
-" 关闭交换文件
-set noswapfile
-
-
-" TODO: remove this, use gundo
-" create undo file
-" if has('persistent_undo')
-  " " How many undos
-  " set undolevels=1000
-  " " number of lines to save for undo
-  " set undoreload=10000
-  " " So is persistent undo ...
-  " "set undofile
-  " set noundofile
-  " " set undodir=/tmp/vimundo/
-" endif
-
-set wildignore=*.swp,*.bak,*.pyc,*.class,.svn
-
-" 突出显示当前列
-" set cursorcolumn
-" 突出显示当前行
-" set cursorline
-
-
-" 设置 退出vim后，内容显示在终端屏幕, 可以用于查看和复制, 不需要可以去掉
-" 好处：误删什么的，如果以前屏幕打开，可以找回
-set t_ti= t_te=
-
-
-" 鼠标暂不启用, 键盘党....
-set mouse-=a
-" 启用鼠标
-" set mouse=a
-" Hide the mouse cursor while typing
-" set mousehide
-
-
-" 修复ctrl+m 多光标操作选择的bug，但是改变了ctrl+v进行字符选中时将包含光标下的字符
-set selection=inclusive
-set selectmode=mouse,key
-
-" change the terminal's title
-set title
 " 去掉输入错误的提示声音
 set novisualbell
 set noerrorbells
 set t_vb=
 set tm=500
-
-" Remember info about open buffers on close
-set viminfo^=%
-
-" For regular expressions turn magic on
-set magic
-
-" Configure backspace so it acts as it should act
-set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
-
-"==========================================
-" Display Settings 展示/排版等界面格式设置
-"==========================================
 
 " 显示当前的行号列号
 set ruler
@@ -145,13 +18,6 @@ set showmode
 
 " 在上下移动光标时，光标的上方或下方至少会保留显示的行数
 set scrolloff=7
-
-" set winwidth=79
-
-" 命令行（在状态行下）的高度，默认为1，这里是2
-set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
-" Always show the status line - use 2 lines for the status bar
-set laststatus=2
 
 " 显示行号
 set number
@@ -215,7 +81,7 @@ set softtabstop=4
 " insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
 set smarttab
 " 将Tab自动转化成空格[需要输入真正的Tab键时，使用 Ctrl+V + Tab]
-set expandtab
+" set expandtab
 " 缩进时，取整 use multiple of shiftwidth when indenting with '<' and '>'
 set shiftround
 
@@ -241,7 +107,7 @@ function! NumberToggle()
     set relativenumber
   endif
 endfunc
-nnoremap <C-n> :call NumberToggle()<cr>
+" nnoremap <C-n> :call NumberToggle()<cr>
 
 " 防止tmux下vim的背景色显示异常
 " Refer: http://sunaku.github.io/vim-256color-bce.html
@@ -338,14 +204,7 @@ nnoremap gk k
 nnoremap j gj
 nnoremap gj j
 
-" F1 - F6 设置
-
-" F1 废弃这个键,防止调出系统帮助
-" I can type :help on my own, thanks.  Protect your fat fingers from the evils of <F1>
-noremap <F1> <Esc>"
-
-" F2 行号开关，用于鼠标复制代码用
-" 为方便复制，用<F2>开启/关闭行号显示:
+" " 为方便复制，用<F2>开启/关闭行号显示:
 function! HideNumber()
   if(&relativenumber == &number)
     set relativenumber! number!
@@ -362,67 +221,15 @@ nnoremap <F3> :set list! list?<CR>
 " F4 换行开关
 nnoremap <F4> :set wrap! wrap?<CR>
 
+
 " F6 语法开关，关闭语法可以加快大文件的展示
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
-
-set pastetoggle=<F5>            "    when in insert mode, press <F5> to go to
-                                "    paste mode, where you can paste mass data
-                                "    that won't be autoindented
-
-" disbale paste mode when leaving insert mode
-au InsertLeave * set nopaste
-
-" F5 set paste问题已解决, 粘贴代码前不需要按F5了
-" F5 粘贴模式paste_mode开关,用于有格式的代码粘贴
-" Automatically set paste mode in Vim when pasting in insert mode
-function! XTermPasteBegin()
-  set pastetoggle=<Esc>[201~
-  set paste
-  return ""
-endfunction
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-
-
 
 " 分屏窗口移动, Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
-
-
-" http://stackoverflow.com/questions/13194428/is-better-way-to-zoom-windows-in-vim-than-zoomwin
-" Zoom / Restore window.
-function! s:ZoomToggle() abort
-    if exists('t:zoomed') && t:zoomed
-        execute t:zoom_winrestcmd
-        let t:zoomed = 0
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-        let t:zoomed = 1
-    endif
-endfunction
-command! ZoomToggle call s:ZoomToggle()
-nnoremap <silent> <Leader>z :ZoomToggle<CR>
-
-
-" Go to home and end using capitalized directions
-noremap H ^
-noremap L $
-
-
-" Map ; to : and save a million keystrokes 用于快速进入命令行
-nnoremap ; :
-
-
-" 命令行模式增强，ctrl - a到行首， -e 到行尾
-cnoremap <C-j> <t_kd>
-cnoremap <C-k> <t_ku>
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-
 
 " 搜索相关
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
@@ -431,128 +238,12 @@ map <space> /
 nnoremap / /\v
 vnoremap / /\v
 
-" Keep search pattern at the center of the screen.
-nnoremap <silent> n nzz
-nnoremap <silent> N Nzz
-nnoremap <silent> * *zz
-nnoremap <silent> # #zz
-nnoremap <silent> g* g*zz
 
 " 去掉搜索高亮
 noremap <silent><leader>/ :nohls<CR>
 
-" switch # *
-nnoremap # *
-nnoremap * #
-
-" for # indent, python文件中输入新行时#号注释不切回行首
-autocmd BufNewFile,BufRead *.py inoremap # X<c-h>#
-
-
-" tab/buffer相关
-
-" 切换前后buffer
-nnoremap [b :bprevious<cr>
-nnoremap ]b :bnext<cr>
-" 使用方向键切换buffer
-noremap <left> :bp<CR>
-noremap <right> :bn<CR>
-
-
-" tab 操作
-" http://vim.wikia.com/wiki/Alternative_tab_navigation
-" http://stackoverflow.com/questions/2005214/switching-to-a-particular-tab-in-vim
-
-" tab切换
-map <leader>th :tabfirst<cr>
-map <leader>tl :tablast<cr>
-
-map <leader>tj :tabnext<cr>
-map <leader>tk :tabprev<cr>
-map <leader>tn :tabnext<cr>
-map <leader>tp :tabprev<cr>
-
-map <leader>te :tabedit<cr>
-map <leader>td :tabclose<cr>
-map <leader>tm :tabm<cr>
-
-" normal模式下切换到确切的tab
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
-noremap <leader>0 :tablast<cr>
-
-" Toggles between the active and last active tab "
-" The first tab is always 1 "
-let g:last_active_tab = 1
-" nnoremap <leader>gt :execute 'tabnext ' . g:last_active_tab<cr>
-" nnoremap <silent> <c-o> :execute 'tabnext ' . g:last_active_tab<cr>
-" vnoremap <silent> <c-o> :execute 'tabnext ' . g:last_active_tab<cr>
-nnoremap <silent> <leader>tt :execute 'tabnext ' . g:last_active_tab<cr>
-autocmd TabLeave * let g:last_active_tab = tabpagenr()
-
-" 新建tab  Ctrl+t
-nnoremap <C-t>     :tabnew<CR>
-inoremap <C-t>     <Esc>:tabnew<CR>
-
-
-" => 选中及操作改键
-
-" 调整缩进后自动选中，方便再次操作
-vnoremap < <gv
-vnoremap > >gv
-
-" y$ -> Y Make Y behave like other capitals
-map Y y$
-
-" 复制选中区到系统剪切板中
-vnoremap <leader>y "+y
-
-" auto jump to end of select
-" vnoremap <silent> y y`]
-" vnoremap <silent> p p`]
-" nnoremap <silent> p p`]
-
-" select all
-map <Leader>sa ggVG
-
-" 选中并高亮最后一次插入的内容
-nnoremap gv `[v`]
-
-" select block
-nnoremap <leader>v V`}
-
-" w!! to sudo & write a file
-cmap w!! w !sudo tee >/dev/null %
-
-" kj 替换 Esc
-inoremap kj <Esc>
-
-" 滚动Speed up scrolling of the viewport slightly
-nnoremap <C-e> 2<C-e>
-nnoremap <C-y> 2<C-y>
-
-
-" Jump to start and end of line using the home row keys
-" 增强tab操作, 导致这个会有问题, 考虑换键
-"nmap t o<ESC>k
-"nmap T O<ESC>j
-
-" Quickly close the current window
-nnoremap <leader>q :q<CR>
-
-" Quickly save the current file
-nnoremap <leader>w :w<CR>
-
-" 交换 ' `, 使得可以快速使用'跳到marked位置
-nnoremap ' `
-nnoremap ` '
+" jj 替换 Esc
+inoremap jj <Esc>
 
 " remap U to <C-r> for easier redo
 nnoremap U <C-r>
@@ -590,28 +281,6 @@ fun! <SID>StripTrailingWhitespaces()
 endfun
 autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
-
-" 定义函数AutoSetFileHead，自动插入文件头
-autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
-function! AutoSetFileHead()
-    "如果文件类型为.sh文件
-    if &filetype == 'sh'
-        call setline(1, "\#!/bin/bash")
-    endif
-
-    "如果文件类型为python
-    if &filetype == 'python'
-        " call setline(1, "\#!/usr/bin/env python")
-        " call append(1, "\# encoding: utf-8")
-        call setline(1, "\# -*- coding: utf-8 -*-")
-    endif
-
-    normal G
-    normal o
-    normal o
-endfunc
-
-
 " 设置可以高亮的关键字
 if has("autocmd")
   " Highlight TODO, FIXME, NOTE, etc.
@@ -628,11 +297,6 @@ endif
 " beta
 " https://dougblack.io/words/a-good-vimrc.html
 set lazyredraw          " redraw only when we need to.
-
-
-"==========================================
-" Theme Settings  主题设置
-"==========================================
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -651,15 +315,6 @@ if has("gui_running")
     set t_Co=256
 endif
 
-
-
-" theme主题
-set background=dark
-set t_Co=256
-
-colorscheme slate
-
-
 " 设置标记一列的背景颜色和数字一行颜色一致
 hi! link SignColumn   LineNr
 hi! link ShowMarksHLl DiffAdd
@@ -674,3 +329,119 @@ highlight clear SpellRare
 highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
+set wrap
+
+
+call plug#begin('~/.vim/plugged')
+Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/gv.vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'preservim/tagbar'
+Plug 'scrooloose/nerdtree'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'voldikss/vim-floaterm'
+call plug#end()
+
+" Snippet
+let g:airline_theme='papercolor'
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "mycoolsnippets"]
+
+" nerdtree
+nnoremap <C-t> :NERDTreeToggle<CR>
+
+" fzf
+let g:fzf_preview_window = ['right:50%', 'ctrl-/']
+let g:fzf_preview_window = ['up:40%:hidden', 'ctrl-/']
+" let g:fzf_preview_window = []
+
+" file explorer
+nmap <Leader>l :Lines<CR>
+nmap <Leader>j :Files<CR>
+nmap <Leader>k :Ag <CR>
+nmap <Leader>; :Buffers<CR>
+nmap <Leader>kk :Ag <C-R><C-W><CR>
+
+" git operate
+map <Leader>bc :BCommits<CR>
+
+set wildmenu
+
+" show tags
+nmap <Leader>c :!ctags -R .<CR>
+nmap <Leader>m :TagbarToggle<CR>
+let tagbar_left=1
+let g:tagbar_sort=0
+
+" theme
+"set t_Co=256   " This is may or may not needed.
+"set background=light
+"colorscheme PaperColor
+
+" shortcut
+nnoremap <C-q> :q!<CR>
+nnoremap <F1> :FloatermNew<cr>
+nnoremap <C-s> :wall<CR>
+
+" Semantic completion (tab)
+let g:tagbar_autofocus = 1
+" let g:apc_enable_ft = {'text':1, 'python':1, 'go':1}
+let g:apc_enable_ft = {'text':1, 'python':1}
+set cpt=.,k,w,b
+set completeopt=menu,menuone,noselect
+set shortmess+=c
+
+" LaTex
+let g:vim_markdown_math = 1
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:tex_flavor='latex'
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal='abdmg'
+hi Conceal ctermbg=none
+set maxmempattern=2000
+
+" setting row/col highlight
+" set cuc
+" set cul
+
+" change the window size
+noremap <silent> <C-Left> :vertical resize +3<CR>
+noremap <silent> <C-Right> :vertical resize -3<CR>
+noremap <silent> <C-Up> :resize -3<CR>
+noremap <silent> <C-Down> :resize +3<CR>
+
+" easymotion
+nmap ss <Plug>(easymotion-s2)
+
+" add tex type
+nmap <leader>tex :UltiSnipsAddFiletypes tex<CR>
+
+" markdown tagbar
+let g:tagbar_type_markdown = {
+    \ 'ctagstype' : 'markdown',
+    \ 'kinds' : [
+	\ 'h:headings',
+	\ 'l:links',
+	\ 'i:images'
+    \ ],
+\ 'sort' : 0,
+\ }
+
+" easy aliagn
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" vim-godef
+let g:godef_split = 2
