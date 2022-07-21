@@ -2,7 +2,6 @@
 let mapleader = ','
 let g:mapleader = ','
 
-
 " 去掉输入错误的提示声音
 set novisualbell
 set noerrorbells
@@ -28,7 +27,6 @@ set nowrap
 set showmatch
 " How many tenths of a second to blink when matching brackets
 set matchtime=2
-
 
 " 设置文内智能搜索提示
 " 高亮search命中的文本
@@ -94,19 +92,19 @@ set ttyfast
 set nrformats=
 
 " 相对行号: 行号变成相对，可以用 nj/nk 进行跳转
-set relativenumber number
-au FocusLost * :set norelativenumber number
-au FocusGained * :set relativenumber
+" set relativenumber number
+" au FocusLost * :set norelativenumber number
+" au FocusGained * :set relativenumber
 " 插入模式下用绝对行号, 普通模式下用相对
-autocmd InsertEnter * :set norelativenumber number
-autocmd InsertLeave * :set relativenumber
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set norelativenumber number
-  else
-    set relativenumber
-  endif
-endfunc
+" autocmd InsertEnter * :set norelativenumber number
+" autocmd InsertLeave * :set relativenumber
+" function! NumberToggle()
+"   if(&relativenumber == 1)
+"     set norelativenumber number
+"   else
+"     set relativenumber
+"   endif
+" endfunc
 " nnoremap <C-n> :call NumberToggle()<cr>
 
 " 防止tmux下vim的背景色显示异常
@@ -173,7 +171,6 @@ autocmd BufReadPost quickfix nnoremap <buffer> s <C-w><Enter><C-w>K
 " command-line window
 autocmd CmdwinEnter * nnoremap <buffer> <CR> <CR>
 
-
 " 上下左右键的行为 会显示其他信息
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
@@ -221,7 +218,6 @@ nnoremap <F3> :set list! list?<CR>
 " F4 换行开关
 nnoremap <F4> :set wrap! wrap?<CR>
 
-
 " F6 语法开关，关闭语法可以加快大文件的展示
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
@@ -237,7 +233,6 @@ map <space> /
 " 进入搜索Use sane regexes"
 nnoremap / /\v
 vnoremap / /\v
-
 
 " 去掉搜索高亮
 noremap <silent><leader>/ :nohls<CR>
@@ -269,8 +264,6 @@ autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript tabstop=2
 
 " disable showmatch when use > in php
 au BufWinEnter *.php set mps-=<:>
-
-
 
 " 保存python文件时删除多余空格
 fun! <SID>StripTrailingWhitespaces()
@@ -331,7 +324,6 @@ highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 set wrap
 
-
 call plug#begin('~/.vim/plugged')
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
@@ -348,13 +340,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'voldikss/vim-floaterm'
 call plug#end()
 
-" Snippet
 let g:airline_theme='papercolor'
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsEditSplit="vertical"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "mycoolsnippets"]
 
 " nerdtree
 nnoremap <C-t> :NERDTreeToggle<CR>
@@ -383,34 +369,13 @@ let tagbar_left=1
 let g:tagbar_sort=0
 
 " theme
-"set t_Co=256   " This is may or may not needed.
-"set background=light
-"colorscheme PaperColor
+set t_Co=256   " This is may or may not needed.
+set background=light
 
 " shortcut
 nnoremap <C-q> :q!<CR>
 nnoremap <F1> :FloatermNew<cr>
 nnoremap <C-s> :wall<CR>
-
-" Semantic completion (tab)
-let g:tagbar_autofocus = 1
-" let g:apc_enable_ft = {'text':1, 'python':1, 'go':1}
-let g:apc_enable_ft = {'text':1, 'python':1}
-set cpt=.,k,w,b
-set completeopt=menu,menuone,noselect
-set shortmess+=c
-
-" LaTex
-let g:vim_markdown_math = 1
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-let g:tex_flavor='latex'
-let g:vimtex_quickfix_mode=0
-set conceallevel=1
-let g:tex_conceal='abdmg'
-hi Conceal ctermbg=none
-set maxmempattern=2000
 
 " setting row/col highlight
 " set cuc
@@ -424,9 +389,6 @@ noremap <silent> <C-Down> :resize +3<CR>
 
 " easymotion
 nmap ss <Plug>(easymotion-s2)
-
-" add tex type
-nmap <leader>tex :UltiSnipsAddFiletypes tex<CR>
 
 " markdown tagbar
 let g:tagbar_type_markdown = {
@@ -445,3 +407,12 @@ nmap ga <Plug>(EasyAlign)
 
 " vim-godef
 let g:godef_split = 2
+
+" WSL yank support
+let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+if executable(s:clip)
+    augroup WSLYank
+        autocmd!
+        autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+    augroup END
+endif

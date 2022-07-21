@@ -8,3 +8,4 @@ def cal_date(s):
     print(interval.days)
 
 cal_date(sys.argv)
+test

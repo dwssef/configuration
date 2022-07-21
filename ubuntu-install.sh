@@ -1,10 +1,5 @@
 #!/bin/bash
 
-fzf_install {
-	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-	~/.fzf/install
-}
-
 function install {
   which $1 &> /dev/null
 
@@ -16,10 +11,11 @@ function install {
   fi
 }
 
+# update_ubuntu_source
 install vim
 install tmux
 install ripgrep
 install openssh-server
 install git
 install fd-find
-
+install fzf

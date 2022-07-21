@@ -1,4 +1,3 @@
-# $ python .deepl.py EN ZH good
 import json
 import sys
 import requests
@@ -141,7 +140,15 @@ def read_file_lines(path):
     with open(path, "r") as file:
         return "\n".join(file.readlines())
 
+def is_chinese(strs):
+    for _char in strs:
+        if '\u4e00' <= _char <= '\u9fa5':
+            return translate("ZH", "EN", sys.argv[1])
+    return translate("EN", "ZH", sys.argv[1])
 
-# t = translate("EN", "ZH", sys.argv[1])
-t = translate(sys.argv[1], sys.argv[2], sys.argv[3])
-print(t)
+if __name__ == "__main__":
+    # s = sys.argv[1]
+    # print(is_chinese(s))
+    # t = translate("EN", "ZH", sys.argv[1])
+    t = translate(sys.argv[1], sys.argv[2], sys.argv[3])
+    print(t)

@@ -7,3 +7,7 @@ wget https://raw.githubusercontent.com/rupa/z/master/z.sh
 # fzf installation
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
+
+# gitalias
+curl https://raw.githubusercontent.com/GitAlias/gitalias/main/gitalias.txt -o ~/.gitalias
+git config --global include.path ~/.gitalias
