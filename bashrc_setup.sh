@@ -10,6 +10,7 @@ alias p='python'
 alias vi='vim'
 alias vz="vi $HOME/.bashrc"
 alias vv="vi $HOME/.vimrc"
+alias vb="vi $HOME/.bash_profile"
 alias sz="source $HOME/.bashrc"
 alias ports='netstat -tulanp'
 alias t="tree -L $1"

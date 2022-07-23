@@ -56,15 +56,6 @@ _gs() {
   cut -d: -f1
 }
 
-# nps() {
-# 	echo -n "/mnt/e/desktop/nps/npc.exe -server=120.24.226.55:8024 -vkey=thssukyln6ypuhat -type=tcp" | clip.exe
-# }
-# nps() {
-# 	/mnt/e/0_WORKSPACE/desktop/nps/npc.exe -server=120.24.226.55:64523 -vkey=1dgfmew7l7hrlgmg -type=tcp
-# }
-frp () {
-	/mnt/e/0_WORKSPACE/desktop/frp/frpc.exe -c /mnt/e/0_WORKSPACE/desktop/frp/frpc.ini
-}
 
 . "$HOME/.cargo/env"
 RG() {
@@ -186,5 +177,7 @@ zb () {
 	cat ~/.browse|fzf;
 }
 
-
+vzz () {
+	vi ~/.command
+}
 

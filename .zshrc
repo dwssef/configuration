@@ -5,9 +5,13 @@ source $ZSH/oh-my-zsh.sh
 source /home/atcg/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /home/atcg/.alias
 
+alias di="docker images"
 alias cdf='cd $(ls -d */ | fzf)'
 host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
-alias proxy="export http_proxy=socks5://$host_ip:17254; export https_proxy=socks5://$host_ip:17254"
+# alias proxy="export http_proxy=socks5://$host_ip:17254; export https_proxy=socks5://$host_ip:17254"
+# alias unproxy='unset http_proxy; unset https_proxy'
+alias proxy="export ALL_PROXY=http://$host_ip:17254"
+alias unproxy="unset ALL_PROXY"
 alias ac="conda activate"
 alias adc="conda deactivate"
 alias c='clear'
@@ -24,7 +28,6 @@ alias serve='python3 -m http.server'
 alias rf='rm -rf'
 alias subl='/mnt/d/soft/SublimeText/subl.exe'
 alias sz='source ~/.zshrc'
-alias unproxy='unset http_proxy; unset https_proxy'
 alias vf='vi $(fzf)'
 alias vi="nvim"
 alias v="nvim"

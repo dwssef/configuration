@@ -22,10 +22,11 @@ function linkDotfile {
   fi
 
   echo "Creating new symlink: ${dest}"
-  # ln -s ${dotfilesDir}/${1} ${dest}
-  cp ${dotfilesDir}/${1} ${dest}
+  ln -s ${dotfilesDir}/${1} ${dest}
+  # cp ${dotfilesDir}/${1} ${dest}
 }
 
-linkDotfile .vimrc
+linkDotfile .command
+linkDotfile .bash_profile
 # source bashrc_setup.sh
 # source centos_install.sh
