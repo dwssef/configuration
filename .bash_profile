@@ -181,3 +181,6 @@ vzz () {
 	vi ~/.command
 }
 
+hp () {
+	python3 /home/atcg/.hypothesis.py $1 | jq
+}
