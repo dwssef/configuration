@@ -221,6 +221,8 @@ nnoremap <F4> :set wrap! wrap?<CR>
 " F6 语法开关，关闭语法可以加快大文件的展示
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
+nnoremap <F8> :w <CR> :!gcc % -o %< && ./%< <CR>
+
 " 分屏窗口移动, Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
@@ -338,6 +340,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'voldikss/vim-floaterm'
+Plug 'honza/vim-snippets'
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'sirver/ultisnips'
 call plug#end()
 
 let g:airline_theme='papercolor'
@@ -353,9 +358,9 @@ let g:fzf_preview_window = ['up:40%:hidden', 'ctrl-/']
 " file explorer
 nmap <Leader>l :Lines<CR>
 nmap <Leader>j :Files<CR>
-nmap <Leader>k :Ag <CR>
+nmap <Leader>k :Rg <CR>
 nmap <Leader>; :Buffers<CR>
-nmap <Leader>kk :Ag <C-R><C-W><CR>
+nmap <Leader>kk :Rg <C-R><C-W><CR>
 
 " git operate
 map <Leader>bc :BCommits<CR>
