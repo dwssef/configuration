@@ -1,5 +1,4 @@
 #!/bin/bash
- 
 tee -a $HOME/.bashrc <<'EOF'
 #######################################
 alias l="tree -C -L 1"
@@ -18,7 +17,6 @@ alias vf='vi $(fzf)'
 
 alias opsh='git add -A :/ && git commit -m "minor changes to css or js" --verbose &&  git push --verbose && git status'
 alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
- 
 export LANG="en_US.UTF-8"
 
 hs() {

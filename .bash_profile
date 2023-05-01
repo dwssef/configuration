@@ -9,7 +9,8 @@ fzf-down() {
   fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
 }
 
-_gf() {
+# View changed but not committed documents
+,gf() {
   is_in_git_repo || return
   git -c color.status=always status --short |
   fzf-down -m --ansi --nth 2..,.. \
@@ -17,7 +18,7 @@ _gf() {
   cut -c4- | sed 's/.* -> //'
 }
 
-_gb() {
+,gb() {
   is_in_git_repo || return
   git branch -a --color=always | grep -v '/HEAD\s' | sort |
   fzf-down --ansi --multi --tac --preview-window right:70% \
@@ -26,36 +27,22 @@ _gb() {
   sed 's#^remotes/##'
 }
 
-_gt() {
-  is_in_git_repo || return
-  git tag --sort -version:refname |
-  fzf-down --multi --preview-window right:70% \
-    --preview 'git show --color=always {}'
-}
-
-_gh() {
-  is_in_git_repo || return
-  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --color=always $@ |
-  fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
-    --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always' |
-  grep -o "[a-f0-9]\{7,\}"
-}
-
-_gr() {
-  is_in_git_repo || return
-  git remote -v | awk '{print $1 "\t" $2}' | uniq |
-  fzf-down --tac \
-    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1}' |
-  cut -d$'\t' -f1
-}
-
-_gs() {
+# stack ?
+,gs() {
   is_in_git_repo || return
   git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
   cut -d: -f1
 }
 
+# found Git commit
+,gco() {
+  git branch | fzf | sed -e "s/* //g" | xargs -I {} git checkout {};
+}
+
+# fuzz find git log 
+,gcs() {
+  git log --oneline | fzf | grep -o -E "^[0-9a-z]+" | xargs -I {} git show {};
+}
 
 . "$HOME/.cargo/env"
 RG() {
@@ -77,7 +64,11 @@ youdao() {
 }
 
 deep(){
-    python3 ~/.dictionary.py $1 | vim -;
+	cambrinary -w $1 -t chinese
+}
+
+de(){
+	python3 ~/.dictionary.py $1 | vi -
 }
 
 cde(){
@@ -101,10 +92,6 @@ clo() {
 }
 # https://api.github.com/repos/vitalets/webrtc-ips/commits
 
-hs() {
-	history | grep $1;
-}
-
 function cu {
     local count=$1;
     if [ -z "${count}" ]; then
@@ -120,19 +107,6 @@ function cu {
     cd $path;
 }
 
-# github found Git commit
-_fzf_gco() {
-  git branch | fzf | sed -e "s/* //g" | xargs -I {} git checkout {};
-}
-# fuzz find git log 
-_fzf_gcs() {
-  git log --oneline | fzf | grep -o -E "^[0-9a-z]+" | xargs -I {} git show {};
-}
-
-ffzf() {
-    $(fd $2|fzf);
-}
-
 # backup file
 bak() {
 	cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
@@ -142,24 +116,26 @@ cgo () {
 	go build -o "$1" "$1".go && ./$1;
 }
 
-cf () {
-	cd $(fd --type directory | fzf);
-}
-
 so () {
-	chrome "https://www.google.com/search?q=site:stackoverflow.com $*";
+	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*)
+	echo $s 2>&1 | clipcopy
+	echo $s
+	chrome "https://www.google.com/search?q=site:stackoverflow.com $s";
 }
 
 goo () {
-	chrome "https://www.google.com/search?q=$*";
+	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*) # Error
+	echo $s 2>&1 | clipcopy
+	echo $s
+	chrome "https://www.google.com/search?q=$s";
 }
 
 h2d () {
 	echo $[16#$1];
 }
 
-tt () {
-	python3 ~/.tt.py $@;
+d2b () {
+    echo "obase=2;$1"|bc
 }
 
 zz () {
@@ -184,3 +160,43 @@ vzz () {
 hp () {
 	python3 /home/atcg/.hypothesis.py $1 | jq
 }
+
+tmp-upload() {
+    local download_url=$(curl --upload-file ./$1 https://transfer.sh/$1)
+    echo "curl -o $1 $download_url"
+    echo "curl -o $1 $download_url" | clipcopy
+    echo "The above command has been copied to clipboard."
+}
+
+jie() {
+    python /mnt/e/0_WORKSPACE/test/管理系统/jieru.py $1 $2
+}
+
+ledge() {
+	python /mnt/e/0_WORKSPACE/test/ledge/search.py $1
+}
+
+fcd() {
+  local dir
+  dir=$(dirs -v | fzf --height 40% --reverse --border --ansi)
+  cd ~$(echo "$dir" | awk '{print $1}')
+}
+
+todo() {
+	vi /home/atcg/.todo
+}
+
+export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
+proxy() {
+	export ALL_PROXY="socks5://$host_ip:17254"
+	export all_proxy="socks5://$host_ip:17254"
+	echo "proxy"
+}
+
+unproxy() {
+	unset ALL_PROXY
+	unset all_proxy
+	echo "unproxy"
+}
+
+function rgv() { vi -c "silent grep $1" -c "copen"; }

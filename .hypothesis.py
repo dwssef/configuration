@@ -18,6 +18,9 @@ endp = f"https://api.hypothes.is/api/search?limit=200&user=czy_1&any={search_tex
 res = requests.get(endp, headers=headers)
 # print(res.json())
 r = res.json()
+
+print(json.dumps(r))
+
 dic = {}
 for i in range(len(r['rows'])):
     dic["text"] = r['rows'][i]['text']
