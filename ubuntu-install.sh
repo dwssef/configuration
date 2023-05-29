@@ -23,5 +23,6 @@ install ripgrep
 install git
 install fd-find
 install fzf
+install bat
 install universal-ctags
 git_config

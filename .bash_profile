@@ -45,7 +45,7 @@ fzf-down() {
 }
 
 . "$HOME/.cargo/env"
-RG() {
+,rg() {
   RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
   INITIAL_QUERY="$1"
   local selected=$(
@@ -140,8 +140,8 @@ d2b () {
 
 zz () {
 	if [ ! -n "$1" ] ;then
-		# eval $(cat ~/.command|fzf)
-		cat ~/.command|fzf|clipcopy;
+		eval $(cat ~/.command|fzf)
+		# cat ~/.command|fzf|clipcopy;
 	else
 		# export ZZ_FILE=$(pwd)"/"$1
 		export ZZ_FILE=$1;

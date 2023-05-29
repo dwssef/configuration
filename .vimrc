@@ -353,15 +353,9 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " fzf
 let g:fzf_preview_window = ['right:50%', 'ctrl-/']
-let g:fzf_preview_window = ['up:40%:hidden', 'ctrl-/']
-" let g:fzf_preview_window = []
+let g:fzf_preview_window = ['hidden,right,50%,<70(up,40%)', 'ctrl-/']
+let g:fzf_preview_window = []
 
-" file explorer
-nmap <Leader>l :Lines<CR>
-nmap <Leader>j :Files<CR>
-nmap <Leader>k :RG <CR>
-nmap <Leader>; :Buffers<CR>
-nmap <Leader>kk :Rg <C-R><C-W><CR>
 
 " git operate
 map <Leader>bc :BCommits<CR>
@@ -424,13 +418,25 @@ endif
 " vmap <C-c> :w! ~/.vimbuffer \| !cat ~/.vimbuffer \| clip.exe <CR><CR>
 set grepprg=rg\ --vimgrep
 
+" fzf.vim
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))
   let reload_command = printf(command_fmt, '{q}')
   let spec = {'options': ['--disabled', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  let spec = fzf#vim#with_preview(spec, 'right', 'ctrl-/')
+  " let spec = fzf#vim#with_preview(spec, 'right', 'ctrl-/')
+  let spec = fzf#vim#with_preview(spec, 'up', 'ctrl-/')
   call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
 endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
+
+nmap <Leader>l :Lines<CR>
+nmap <Leader>j :Files<CR>
+nmap <Leader>k :RG <CR>
+nmap <Leader>; :Buffers<CR>
+nmap <Leader>kk :RG <C-R><C-W><CR>
+nmap cc :Commands<CR>

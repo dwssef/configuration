@@ -16,8 +16,7 @@ alias dud='du -d 1 -h'
 alias fds='fd --search-path'
 alias fzf="fzf --reverse -m -0"
 alias o="explorer.exe ."
-alias p="pwd"
-alias pp='python3'
+alias p='python3'
 alias python='python3'
 alias serve='python3 -m http.server'
 alias rf='rm -rf'
@@ -30,7 +29,7 @@ alias v="nvim"
 alias vt="vi ~/.TODO"
 alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
-alias hs="history|fzf"
+alias hf="history|fzf"
 # alias l="tree -C -L 1"
 alias l="exa --tree --level=1"
 alias calDate="python3 /home/atcg/.calDate.py $1 $2"
@@ -79,7 +78,7 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 # cat<<EOF
 # EOF
 
-export PATH="/home/atcg/miniconda3/bin:$PATH"
+# export PATH="/home/atcg/miniconda3/bin:$PATH"  # commented out by conda initialize
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.bash_profile ] && source ~/.bash_profile
@@ -98,3 +97,20 @@ if type rg &> /dev/null; then
   export FZF_DEFAULT_COMMAND='rg --files'
   export FZF_DEFAULT_OPTS='-m --height 50% --border'
 fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/atcg/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/atcg/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/atcg/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/atcg/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH=$PATH:/home/atcg/.local/bin
