@@ -64,10 +64,10 @@ endfun
 
 " 缩进配置
 " Smart indent
-set smartindent
+" set smartindent
 " 打开自动缩进
 " never add copyindent, case error   " copy the previous indentation on autoindenting
-set autoindent
+" set autoindent
 
 " tab相关变更
 " 设置Tab键的宽度        [等同的空格个数]
@@ -79,7 +79,7 @@ set softtabstop=4
 " insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
 set smarttab
 " 将Tab自动转化成空格[需要输入真正的Tab键时，使用 Ctrl+V + Tab]
-" set expandtab
+set expandtab
 " 缩进时，取整 use multiple of shiftwidth when indenting with '<' and '>'
 set shiftround
 
@@ -212,9 +212,12 @@ function! HideNumber()
   endif
   set number?
 endfunc
+
 nnoremap <F2> :call HideNumber()<CR>
+
 " F3 显示可打印字符开关
 nnoremap <F3> :set list! list?<CR>
+
 " F4 换行开关
 nnoremap <F4> :set wrap! wrap?<CR>
 
@@ -331,13 +334,10 @@ Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
-" Plug 'junegunn/vim-easy-align'
-" Plug 'preservim/tagbar'
+Plug 'junegunn/vim-easy-align'
 " Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
 Plug 'honza/vim-snippets'
 Plug 'sirver/ultisnips'
 Plug 'RRethy/vim-illuminate'
@@ -440,3 +440,15 @@ nmap <Leader>k :RG <CR>
 nmap <Leader>; :Buffers<CR>
 nmap <Leader>kk :RG <C-R><C-W><CR>
 nmap cc :Commands<CR>
+
+" Run python script
+nmap <Leader>r :w<CR>:!python3 %<CR>
+
+" tab -> space
+set ts=4
+set expandtab
+" let g:fzf_command_history = 1
+" let g:fzf_history_dir = '~/my_fzf_history'
+
+" set cc=80
+"

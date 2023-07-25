@@ -10,6 +10,7 @@ git log --oneline
 pkill -f tmux
 go env -w GO111MODULE=on
 vi /mnt/d/soft/Dropbox/logbook/other/vim_tutorial.md
+vi /mnt/d/soft/Dropbox/logbook/other/Linux_trick.md
 smug start $(smug list|fzf)
 smug stop $(smug list|fzf)
 

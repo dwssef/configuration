@@ -17,13 +17,10 @@ alias fds='fd --search-path'
 alias fzf="fzf --reverse -m -0"
 alias o="explorer.exe ."
 alias p='python3'
-alias python='python3'
-alias serve='python3 -m http.server'
+alias serve='python3 -m httnp.server'
 alias rf='rm -rf'
 alias subl='/mnt/d/soft/SublimeText/subl.exe'
 alias sz='source ~/.zshrc'
-alias vf='vi $(fzf)'
-# alias vf='vi $(find . -maxdepth 1 -type f|fzf)'
 alias vi="nvim"
 alias v="nvim"
 alias vt="vi ~/.TODO"
@@ -31,19 +28,13 @@ alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
 alias hf="history|fzf"
 # alias l="tree -C -L 1"
-alias l="exa --tree --level=1"
+alias l="exa --tree --level=2"
+# alias ls="exa"
 alias calDate="python3 /home/atcg/.calDate.py $1 $2"
 
 # docker alias
 alias dps="docker ps -a"
 alias di="docker images"
-
-# English
-alias def="deep"
-alias tran="python3 ~/.translation.py english chinese $1"
-alias dec='python3 /home/atcg/.deepl.py EN ZH "`clippaste`"'
-# alias dee='python3 /home/atcg/.deepl.py ZH EN "`clippaste`" | clipcopy'
-alias dee="python3 /home/atcg/.deepl.py ZH EN "$1""
 
 alias la="exa -alh"
 alias rg="=rg -S"
@@ -113,4 +104,8 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+export PATH="/home/atcg/miniconda3/bin:$PATH"
 export PATH=$PATH:/home/atcg/.local/bin
+
+# pdir2
+export PYTHONSTARTUP=$HOME/.pythonstartup

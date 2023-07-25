@@ -45,6 +45,8 @@ fzf-down() {
 }
 
 . "$HOME/.cargo/env"
+
+
 ,rg() {
   RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
   INITIAL_QUERY="$1"
@@ -56,7 +58,11 @@ fzf-down() {
           --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
           --preview-window '~3:+{2}+3/2'
   )
-  [ -n "$selected" ] && $EDITOR "$selected"
+  if [ -n "$selected" ]; then
+    file_path=$(echo "$selected" | awk -F ':' '{print $1}')
+    line_number=$(echo "$selected" | awk -F ':' '{print $2}')
+    vi "$file_path" "+$line_number" 
+  fi
 }
 
 youdao() {
@@ -149,6 +155,7 @@ zz () {
 		cat $ZZ_FILE|fzf|clipcopy;
 	fi
 }
+
 zb () {
 	cat ~/.browse|fzf;
 }
@@ -168,14 +175,6 @@ tmp-upload() {
     echo "The above command has been copied to clipboard."
 }
 
-jie() {
-    python /mnt/e/0_WORKSPACE/test/管理系统/jieru.py $1 $2
-}
-
-ledge() {
-	python /mnt/e/0_WORKSPACE/test/ledge/search.py $1
-}
-
 fcd() {
   local dir
   dir=$(dirs -v | fzf --height 40% --reverse --border --ansi)
@@ -186,6 +185,7 @@ todo() {
 	vi /home/atcg/.todo
 }
 
+# setting proxy
 export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
 	export ALL_PROXY="socks5://$host_ip:17254"
@@ -200,3 +200,37 @@ unproxy() {
 }
 
 function rgv() { vi -c "silent grep $1" -c "copen"; }
+
+# note in dir logbook
+NOTE_DIRECTORY="/mnt/d/soft/Dropbox/logbook"
+note() {
+	if [[ "$1" == "new" ]]; then
+		cd "$NOTE_DIRECTORY"
+		vi
+	elif [[ "$1" == "list" ]]; then
+		vi $(find /mnt/d/soft/Dropbox/logbook -type f -name "*.md" | fzf)
+	else
+		echo "Invalid command. Usage: note [new|list]"
+	fi
+}
+
+# use fzf cat files
+cf(){
+   ls -p | grep -v / | fzf --preview 'bat {} --style=full --color=always' --preview-window=right:80%:wrap 
+}
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# 定义一个名为'vf'的函数，用于通过fzf选择文件，并使用bat预览文件内容后打开选定文件
+vf() {
+  local selected_file
+  selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
+
+  if [ -n "$selected_file" ]; then
+    vi "$selected_file"
+  fi
+}
+
