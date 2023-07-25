@@ -1,13 +1,10 @@
-export ZSH="/home/atcg/.oh-my-zsh"
+export ZSH="/home/dw/.oh-my-zsh"
 ZSH_THEME="frontcube"
 plugins=(z)
 source $ZSH/oh-my-zsh.sh
-source /home/atcg/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /home/atcg/.alias
+# source /home/atcg/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 alias cdf='cd $(ls -d */ | fzf)'
-alias ac="conda activate"
-alias adc="conda deactivate"
 alias c='clear'
 alias cg='curl -L -O'
 alias chr="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
@@ -21,8 +18,6 @@ alias serve='python3 -m httnp.server'
 alias rf='rm -rf'
 alias subl='/mnt/d/soft/SublimeText/subl.exe'
 alias sz='source ~/.zshrc'
-alias vi="nvim"
-alias v="nvim"
 alias vt="vi ~/.TODO"
 alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
@@ -36,7 +31,7 @@ alias calDate="python3 /home/atcg/.calDate.py $1 $2"
 alias dps="docker ps -a"
 alias di="docker images"
 
-alias la="exa -alh"
+alias la="ls -alh"
 alias rg="=rg -S"
 alias rg1="=rg -S --maxdepth 1"
 alias rg2="=rg -S --maxdepth 2"
@@ -69,8 +64,6 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 # cat<<EOF
 # EOF
 
-# export PATH="/home/atcg/miniconda3/bin:$PATH"  # commented out by conda initialize
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.bash_profile ] && source ~/.bash_profile
 
@@ -91,21 +84,21 @@ fi
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/atcg/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/dw/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/atcg/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/atcg/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/dw/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/dw/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/atcg/miniconda3/bin:$PATH"
+        export PATH="/home/dw/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-export PATH="/home/atcg/miniconda3/bin:$PATH"
+export PATH="/home/dw/miniconda3/bin:$PATH"  # commented out by conda initialize
 export PATH=$PATH:/home/atcg/.local/bin
 
 # pdir2
-export PYTHONSTARTUP=$HOME/.pythonstartup
+# export PYTHONSTARTUP=$HOME/.pythonstartup

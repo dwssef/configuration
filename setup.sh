@@ -13,7 +13,7 @@ function linkDotfile {
   elif [ -f "${dest}" ]; then
     # Existing file
     echo "Backing up existing file: ${dest}"
-    mv ${dest}{,.${dateStr}}
+    mv ${dest}{,.bak.${dateStr}}
 
   elif [ -d "${dest}" ]; then
     # Existing dir
@@ -22,11 +22,12 @@ function linkDotfile {
   fi
 
   echo "Creating new symlink: ${dest}"
-  ln -s ${dotfilesDir}/${1} ${dest}
+  ln ${dotfilesDir}/${1} ${dest}
   # cp ${dotfilesDir}/${1} ${dest}
 }
 
-linkDotfile .command
-linkDotfile .bash_profile
+#linkDotfile .command
+#linkDotfile .bash_profile
+# linkDotfile .zshrc
 # source bashrc_setup.sh
 # source centos_install.sh

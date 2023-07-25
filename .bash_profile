@@ -44,7 +44,7 @@ fzf-down() {
   git log --oneline | fzf | grep -o -E "^[0-9a-z]+" | xargs -I {} git show {};
 }
 
-. "$HOME/.cargo/env"
+# . "$HOME/.cargo/env"
 
 
 ,rg() {
@@ -190,7 +190,7 @@ export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
 	export ALL_PROXY="socks5://$host_ip:17254"
 	export all_proxy="socks5://$host_ip:17254"
-	echo "proxy"
+	echo "set up proxy"
 }
 
 unproxy() {
@@ -234,3 +234,11 @@ vf() {
   fi
 }
 
+# 
+vi() {
+  if command -v nvim &>/dev/null; then
+    nvim "$@"
+  else
+    vim "$@"
+  fi
+}
