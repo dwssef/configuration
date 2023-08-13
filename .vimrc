@@ -1,3 +1,6 @@
+" 指定python解析器
+let g:python3_host_prog = '/home/dw/miniconda3/bin/python3'
+
 " 修改leader键
 let mapleader = ','
 let g:mapleader = ','

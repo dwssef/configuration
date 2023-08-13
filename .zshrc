@@ -2,13 +2,13 @@ export ZSH="/home/dw/.oh-my-zsh"
 ZSH_THEME="frontcube"
 plugins=(z)
 source $ZSH/oh-my-zsh.sh
-# source /home/atcg/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /home/dw/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.alias
 
 alias cdf='cd $(ls -d */ | fzf)'
 alias c='clear'
 alias cg='curl -L -O'
 alias chr="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
-alias code="code.exe"
 alias dud='du -d 1 -h'
 alias fds='fd --search-path'
 alias fzf="fzf --reverse -m -0"
@@ -22,8 +22,9 @@ alias vt="vi ~/.TODO"
 alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
 alias hf="history|fzf"
+alias l="ls -alh"
 # alias l="tree -C -L 1"
-alias l="exa --tree --level=2"
+# alias l="exa --tree --level=2"
 # alias ls="exa"
 alias calDate="python3 /home/atcg/.calDate.py $1 $2"
 
@@ -43,34 +44,16 @@ alias e.="explorer.exe ."
 alias y="youdao"
 alias vb="vi ~/.bash_profile"
 alias vc="vi ~/.command"
-# alias go="go1.13"
-###################
-
-# export PATH=$PATH:/home/atcg/.yarn/bin
-# export PATH=$PATH:/home/atcg/.local/bin
-# export GITLAB_HOME=$HOME/gitlab
 
 complete -W "\$(gf -list)" g
 
 # Golang
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
-# Go 1.13
-# export GOROOT=$(go1.13 env GOROOT)
-
-# TODO
-# cat<<EOF
-# EOF
+# export GOROOT=/usr/local/go
+# export GOPATH=$HOME/go
+# export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.bash_profile ] && source ~/.bash_profile
-
-# nvm
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 if [[ "$(umask)" == '000' ]]; then
     umask 022
@@ -97,8 +80,8 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-export PATH="/home/dw/miniconda3/bin:$PATH"  # commented out by conda initialize
-export PATH=$PATH:/home/atcg/.local/bin
+# export PATH=$PATH:/home/dw/miniconda3/bin  # commented out by conda initialize
+# export PATH="/home/dw/miniconda3/bin:$PATH"  # commented out by conda initialize
+export PATH=$PATH:/home/dw/.local/bin
 
-# pdir2
 # export PYTHONSTARTUP=$HOME/.pythonstartup

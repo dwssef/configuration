@@ -182,7 +182,7 @@ fcd() {
 }
 
 todo() {
-	vi /home/atcg/.todo
+	vi "$HOME/.todo"
 }
 
 # setting proxy

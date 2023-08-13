@@ -29,5 +29,7 @@ function linkDotfile {
 #linkDotfile .command
 #linkDotfile .bash_profile
 # linkDotfile .zshrc
+linkDotfile .tmux.conf
 # source bashrc_setup.sh
 # source centos_install.sh
+
