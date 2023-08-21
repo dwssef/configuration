@@ -13,4 +13,5 @@ vi /mnt/d/soft/Dropbox/logbook/other/vim_tutorial.md
 vi /mnt/d/soft/Dropbox/logbook/other/Linux_trick.md
 smug start $(smug list|fzf)
 smug stop $(smug list|fzf)
-
+rg -l namedtuple | xargs wc -l | sort | awk '{print $2}'
+python3 -c "from rich import print;print(dir(__builtins__))"

@@ -344,6 +344,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'honza/vim-snippets'
 Plug 'sirver/ultisnips'
 Plug 'RRethy/vim-illuminate'
+Plug 'preservim/tagbar'
 call plug#end()
 
 let g:airline_theme='papercolor'
@@ -442,7 +443,8 @@ nmap <Leader>j :Files<CR>
 nmap <Leader>k :RG <CR>
 nmap <Leader>; :Buffers<CR>
 nmap <Leader>kk :RG <C-R><C-W><CR>
-nmap cc :Commands<CR>
+" nmap cc :Commands<CR>
+nmap cc :History:<CR>
 
 " Run python script
 nmap <Leader>r :w<CR>:!python3 %<CR>

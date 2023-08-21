@@ -255,7 +255,7 @@ fzf_select
 # apt_install zsh
 # apt_install ripgrep
 # apt_install fd-find
-# apt_install bat
+# apt_install bat # batcat
 # apt_install universal-ctags
 # git_config
 # install_fzf

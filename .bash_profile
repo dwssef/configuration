@@ -44,9 +44,6 @@ fzf-down() {
   git log --oneline | fzf | grep -o -E "^[0-9a-z]+" | xargs -I {} git show {};
 }
 
-# . "$HOME/.cargo/env"
-
-
 ,rg() {
   RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
   INITIAL_QUERY="$1"
@@ -69,21 +66,8 @@ youdao() {
   w3m -dump "https://www.youdao.com/w/$1/#keyfrom=dict2.top" | grep "go top" -A 200 | tail -n +2 | more;
 }
 
-deep(){
-	cambrinary -w $1 -t chinese
-}
-
-de(){
-	python3 ~/.dictionary.py $1 | vi -
-}
-
 cde(){
 	cd /mnt/e/0_WORKSPACE;
-}
-
-gitc(){
-    gitc_ret=`echo $1|sed 's/github.com/github.com.cnpmjs.org/g'`;
-    git clone $gitc_ret;
 }
 
 shrug(){
@@ -189,6 +173,10 @@ todo() {
 export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
 	export ALL_PROXY="socks5://$host_ip:17254"
+	export http_proxy="http://$host_ip:17254"
+	export https_proxy="http://$host_ip:17254"
+	export HTTP_PROXY="http://$host_ip:17254"
+	export HTTPS_PROXY="http://$host_ip:17254"
 	export all_proxy="socks5://$host_ip:17254"
 	echo "set up proxy"
 }
@@ -196,6 +184,10 @@ proxy() {
 unproxy() {
 	unset ALL_PROXY
 	unset all_proxy
+	unset http_proxy  
+	unset https_proxy 
+	unset hTTP_PROXY  
+	unset hTTPS_PROXY 
 	echo "unproxy"
 }
 
@@ -227,7 +219,8 @@ eval "$(pyenv init -)"
 # 定义一个名为'vf'的函数，用于通过fzf选择文件，并使用bat预览文件内容后打开选定文件
 vf() {
   local selected_file
-  selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
+  # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
+  selected_file=$(fzf --preview 'cat {}')
 
   if [ -n "$selected_file" ]; then
     vi "$selected_file"
@@ -242,3 +235,17 @@ vi() {
     vim "$@"
   fi
 }
+
+##### learn python #####
+
+# print modules source file path
+pf() {
+    python3 -c "import $1;print($1.__file__)" 
+}
+
+# search for code that contains this function
+sf() {
+    cd /home/dw/.pyenv/versions/3.11.3/lib/python3.11
+    rg -l $1 | xargs wc -l | sort
+}
+
