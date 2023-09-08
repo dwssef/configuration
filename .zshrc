@@ -14,6 +14,7 @@ alias fds='fd --search-path'
 alias fzf="fzf --reverse -m -0"
 alias o="explorer.exe ."
 alias p='python3'
+alias pip="python3 -m pip"
 alias serve='python3 -m httnp.server'
 alias rf='rm -rf'
 alias subl='/mnt/d/soft/SublimeText/subl.exe'
@@ -85,4 +86,4 @@ unset __conda_setup
 # export PATH="/home/dw/miniconda3/bin:$PATH"  # commented out by conda initialize
 export PATH=$PATH:/home/dw/.local/bin
 
-# export PYTHONSTARTUP=$HOME/.pythonstartup
+export PYTHONSTARTUP=$HOME/.pystartup

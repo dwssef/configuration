@@ -9,6 +9,24 @@ fzf-down() {
   fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
 }
 
+,gr() {
+  is_in_git_repo || return
+  git remote -v | awk '{print $1 "\t" $2}' | uniq |
+  fzf-down --tac \
+    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1}' |
+  cut -d$'\t' -f1
+}
+
+    # fzf-down --tac --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+,gh() {
+  is_in_git_repo || return
+  git log "$@" --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --color=always |
+  fzf-down --ansi --no-sort --multi --bind 'ctrl-s:toggle-sort' \
+    --header 'Press CTRL-S to toggle sort' \
+    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --stat --color=always' |
+  grep -o "[a-f0-9]\{7,\}"
+}
+
 # View changed but not committed documents
 ,gf() {
   is_in_git_repo || return
@@ -18,6 +36,7 @@ fzf-down() {
   cut -c4- | sed 's/.* -> //'
 }
 
+# show branch commit log
 ,gb() {
   is_in_git_repo || return
   git branch -a --color=always | grep -v '/HEAD\s' | sort |
@@ -27,14 +46,14 @@ fzf-down() {
   sed 's#^remotes/##'
 }
 
-# stack ?
+# show stash list
 ,gs() {
   is_in_git_repo || return
   git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
   cut -d: -f1
 }
 
-# found Git commit
+# change branch
 ,gco() {
   git branch | fzf | sed -e "s/* //g" | xargs -I {} git checkout {};
 }
@@ -160,35 +179,35 @@ tmp-upload() {
 }
 
 fcd() {
-  local dir
-  dir=$(dirs -v | fzf --height 40% --reverse --border --ansi)
-  cd ~$(echo "$dir" | awk '{print $1}')
+    local dir
+    dir=$(dirs -v | fzf --height 40% --reverse --border --ansi)
+    cd ~$(echo "$dir" | awk '{print $1}')
 }
 
 todo() {
-	vi "$HOME/.todo"
+    vi "$HOME/.todo"
 }
 
 # setting proxy
 export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
-	export ALL_PROXY="socks5://$host_ip:17254"
-	export http_proxy="http://$host_ip:17254"
-	export https_proxy="http://$host_ip:17254"
-	export HTTP_PROXY="http://$host_ip:17254"
-	export HTTPS_PROXY="http://$host_ip:17254"
-	export all_proxy="socks5://$host_ip:17254"
-	echo "set up proxy"
+    export ALL_PROXY="socks5://$host_ip:17254"
+    export http_proxy="http://$host_ip:17254"
+    export https_proxy="http://$host_ip:17254"
+    export HTTP_PROXY="http://$host_ip:17254"
+    export HTTPS_PROXY="http://$host_ip:17254"
+    export all_proxy="socks5://$host_ip:17254"
+    echo "set up proxy"
 }
 
 unproxy() {
-	unset ALL_PROXY
-	unset all_proxy
-	unset http_proxy  
-	unset https_proxy 
-	unset hTTP_PROXY  
-	unset hTTPS_PROXY 
-	echo "unproxy"
+    unset ALL_PROXY
+    unset all_proxy
+    unset http_proxy  
+    unset https_proxy 
+    unset hTTP_PROXY  
+    unset hTTPS_PROXY 
+    echo "unproxy"
 }
 
 function rgv() { vi -c "silent grep $1" -c "copen"; }
@@ -218,22 +237,22 @@ eval "$(pyenv init -)"
 
 # 定义一个名为'vf'的函数，用于通过fzf选择文件，并使用bat预览文件内容后打开选定文件
 vf() {
-  local selected_file
-  # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
-  selected_file=$(fzf --preview 'cat {}')
+    local selected_file
+    # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
+    selected_file=$(fzf --preview 'cat {}')
 
-  if [ -n "$selected_file" ]; then
-    vi "$selected_file"
-  fi
+    if [ -n "$selected_file" ]; then
+        vi "$selected_file"
+    fi
 }
 
 # 
 vi() {
-  if command -v nvim &>/dev/null; then
-    nvim "$@"
-  else
-    vim "$@"
-  fi
+    if command -v nvim &>/dev/null; then
+        nvim "$@"
+    else
+        vim "$@"
+    fi
 }
 
 ##### learn python #####
@@ -248,4 +267,3 @@ sf() {
     cd /home/dw/.pyenv/versions/3.11.3/lib/python3.11
     rg -l $1 | xargs wc -l | sort
 }
-

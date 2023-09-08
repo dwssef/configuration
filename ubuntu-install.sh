@@ -101,6 +101,18 @@ function install_smug {
     fi
 }
 
+function install_gh {
+    download_url=$(curl -s https://api.github.com/repos/cli/cli/releases/latest \
+    | grep browser_download_url \
+    | grep amd64.deb \
+    | cut -d '"' -f4)
+
+    curl -fL $download_url -o gh.deb
+    dpkg -i gh.deb
+    gh --version
+    rm gh.deb
+}
+
 function install_nvim {
 
     if command -v nvim &>/dev/null; then
@@ -179,77 +191,6 @@ function check_proxy {
     fi
 
 }
-
-function exit_script {
-    echo "退出脚本"
-    exit 0
-}
-
-
-function fzf_select {
-
-    if ! command -v fzf &> /dev/null; then
-        install_fzf
-    fi
-
-
-    while true; do
-        selected_function=$(echo -e "apt_install tmux\n\
-apt_install zsh\n\
-apt_install ripgrep\n\
-apt_install fd-find\n\
-apt_install universal-ctags\n\
-git_config\n\
-install_fzf\n\
-install_z_jmp\n\
-install_git_alias\n\
-check_proxy\n\
-install_nvim\n\
-install_smug\n\
-install_conda\n\
-exit_function" | \
-        fzf)
-
-        case "$selected_function" in
-            "apt_install tmux")
-                apt_install tmux ;;
-            "apt_install zsh")
-                apt_install zsh ;;
-            "apt_install ripgrep")
-                apt_install ripgrep ;;
-            "apt_install fd-find")
-                apt_install fd-find ;;
-            "apt_install universal-ctags")
-                apt_install universal-ctags ;;
-            "git_config")
-                git_config ;;
-            "install_fzf")
-                install_fzf ;;
-            "install_z_jmp")
-                install_z_jmp ;;
-            "install_git_alias")
-                install_git_alias ;;
-            "check_proxy")
-                check_proxy ;;
-            "install_nvim")
-                install_nvim ;;
-            "install_smug")
-                install_smug ;;
-            "install_conda")
-                install_conda ;;
-            "exit_function")
-                echo "退出脚本"
-                exit 0 ;;
-            *)
-                echo "无效的选择，请重新选择。" ;;
-        esac
-    done
-
-
-}
-
-fzf_select
-
 # update_ubuntu_source
 # apt_install tmux
 # apt_install zsh

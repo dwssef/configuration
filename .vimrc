@@ -227,7 +227,9 @@ nnoremap <F4> :set wrap! wrap?<CR>
 " F6 语法开关，关闭语法可以加快大文件的展示
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
-nnoremap <F8> :w <CR> :!gcc % -o %< && ./%< && rm %<<CR>
+" Map F8 to execute current Python script
+nmap <F8> :w<CR>:!python %<CR>
+imap <F8> <Esc>:w<CR>:!python %<CR>
 
 " 分屏窗口移动, Smart way to move between windows
 map <C-j> <C-W>j
