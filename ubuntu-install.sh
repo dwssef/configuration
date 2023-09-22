@@ -182,6 +182,12 @@ function install_pyenv {
     fi
 }
 
+function install_ipcalc {
+    curl https://raw.githubusercontent.com/kjokjo/ipcalc/master/ipcalc -o ipcalc
+    sudo ln ipcalc /usr/bin
+    rm ipcalc
+}
+
 function check_proxy {
 
     if [ -n "$all_proxy" ]; then
@@ -202,6 +208,7 @@ function check_proxy {
 # install_fzf
 # install_z_jmp
 # gnstall_git_alias
+install_ipcalc
 
 # # not tested
 # check_proxy

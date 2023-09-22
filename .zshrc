@@ -46,6 +46,7 @@ alias y="youdao"
 alias vb="vi ~/.bash_profile"
 alias vc="vi ~/.command"
 alias proxy_test="curl -vv https://google.com"
+alias code="code.exe"
 
 complete -W "\$(gf -list)" g
 

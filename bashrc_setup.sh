@@ -6,16 +6,13 @@ alias ll='ls -lh'
 alias la='ls -alh'
 alias c='clear'
 alias p='python'
-alias vi='vim'
 alias vz="vi $HOME/.bashrc"
 alias vv="vi $HOME/.vimrc"
 alias vb="vi $HOME/.bash_profile"
 alias sz="source $HOME/.bashrc"
 alias ports='netstat -tulanp'
 alias t="tree -L $1"
-alias vf='vi $(fzf)'
 
-alias opsh='git add -A :/ && git commit -m "minor changes to css or js" --verbose &&  git push --verbose && git status'
 alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
 export LANG="en_US.UTF-8"
 
