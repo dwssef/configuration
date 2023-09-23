@@ -1,4 +1,4 @@
-# GIT heart FZF
+# [ -f ~/.bashrc ] && source ~/.bashrc
 # -------------
 
 is_in_git_repo() {

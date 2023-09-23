@@ -177,7 +177,7 @@ function install_pyenv {
         echo "pyenv installed"
         return 0
     else
-        check_proxy
+        # check_proxy
         curl https://pyenv.run | bash
     fi
 }
@@ -197,7 +197,16 @@ function check_proxy {
     fi
 
 }
-# update_ubuntu_source
+
+function EXIT {
+    echo "exit"
+    exit 0
+}
+
+function test {
+    echo "this is test"
+}
+
 # apt_install tmux
 # apt_install zsh
 # apt_install ripgrep
@@ -207,11 +216,20 @@ function check_proxy {
 # git_config
 # install_fzf
 # install_z_jmp
-# gnstall_git_alias
-install_ipcalc
-
-# # not tested
+# install_git_alias
+# install_ipcalc
 # check_proxy
 # install_nvim
 # install_smug
 # install_conda
+
+IFS=$'\n'
+result=""
+for f in $(declare -F); do
+   result="${result}${f:11}\n"
+done
+
+while true; do
+    select_func=$(echo -e "$result" | fzf)
+    eval "$select_func"
+done
