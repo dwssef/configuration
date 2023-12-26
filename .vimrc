@@ -133,7 +133,8 @@ set helplang=cn
 set termencoding=utf-8
 
 " Use Unix as the standard file type
-set ffs=unix,dos,mac
+" set ffs=unix,dos,mac
+set ff=unix
 
 " 如遇Unicode值大于255的文本，不必等到空格再折行
 set formatoptions+=m
@@ -459,3 +460,10 @@ set expandtab
 
 " set cc=80
 "
+nmap ; :
+nmap H ^
+nmap L $
+
+"Reselect visual block after indent/outdent.调整缩进后自动选中，方便再次操作
+vnoremap < <gv
+vnoremap > >gv
