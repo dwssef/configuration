@@ -1,11 +1,12 @@
 export ZSH="/home/dw/.oh-my-zsh"
-ZSH_THEME="frontcube"
+# ZSH_THEME="frontcube"
+ZSH_THEME="gentoo"
 plugins=(z)
 source $ZSH/oh-my-zsh.sh
-source /home/dw/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.alias
 
-alias cdf='cd $(ls -d */ | fzf)'
+alias cdf='cd "$(ls -d */ | fzf)"'
 alias c='clear'
 alias cg='curl -L -O'
 alias chr="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
@@ -15,16 +16,16 @@ alias fzf="fzf --reverse -m -0"
 alias o="explorer.exe ."
 alias p='python3'
 alias pip="python3 -m pip"
-alias serve='python3 -m httnp.server'
+alias server='python3 -m http.server'
 alias rf='rm -rf'
 alias subl='/mnt/d/soft/SublimeText/subl.exe'
 alias sz='source ~/.zshrc'
-alias vt="vi ~/.TODO"
+alias vi='nvim'
 alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
 alias hf="history|fzf"
 alias l="ls -alh"
-# alias l="tree -C -L 1"
+alias lt="tree -C -L 2"
 # alias l="exa --tree --level=2"
 # alias ls="exa"
 alias calDate="python3 /home/atcg/.calDate.py $1 $2"
@@ -46,7 +47,10 @@ alias y="youdao"
 alias vb="vi ~/.bash_profile"
 alias vc="vi ~/.command"
 alias proxy_test="curl -vv https://google.com"
-alias code="code.exe"
+# alias code="code.exe"
+# alias code='code.exe --remote wsl+Ubuntu "$(pwd)"'
+# alias code="/home/dw/.vscode-server/bin/695af097c7bd098fbf017ce3ac85e09bbc5dda06/bin/remote-cli/code"
+alias time='/usr/bin/time'
 
 complete -W "\$(gf -list)" g
 
@@ -88,3 +92,10 @@ unset __conda_setup
 export PATH=$PATH:/home/dw/.local/bin
 
 export PYTHONSTARTUP=$HOME/.pystartup
+export GOPROXY=https://goproxy.cn,direct
+export GOROOT=/usr/local/go
+export PATH=$PATH:/usr/local/go/bin
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
