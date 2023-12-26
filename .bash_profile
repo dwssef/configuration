@@ -81,10 +81,6 @@ fzf-down() {
   fi
 }
 
-youdao() {
-  w3m -dump "https://www.youdao.com/w/$1/#keyfrom=dict2.top" | grep "go top" -A 200 | tail -n +2 | more;
-}
-
 cde(){
 	cd /mnt/e/0_WORKSPACE;
 }
@@ -94,12 +90,6 @@ shrug(){
 }
 
 mkcd () { mkdir -p "$1" && cd "$1"; }
-
-# Counting lines of code
-clo() {
-    curl -s https://api.codetabs.com/v1/loc/\?github\=$1 |jq;
-}
-# https://api.github.com/repos/vitalets/webrtc-ips/commits
 
 function cu {
     local count=$1;
@@ -119,10 +109,6 @@ function cu {
 # backup file
 bak() {
 	cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
-}
-
-cgo () {
-	go build -o "$1" "$1".go && ./$1;
 }
 
 so () {
@@ -168,7 +154,7 @@ vzz () {
 }
 
 hp () {
-	python3 /home/atcg/.hypothesis.py $1 | jq
+	python3 /home/dw/.hypothesis.py $1 | jq
 }
 
 tmp-upload() {
@@ -185,7 +171,7 @@ fcd() {
 }
 
 todo() {
-    vi "$HOME/.todo"
+    vi "$HOME/.todo.md"
 }
 
 # setting proxy
@@ -210,6 +196,7 @@ unproxy() {
     echo "unproxy"
 }
 
+# Search and browse text quickly in editor
 function rgv() { vi -c "silent grep $1" -c "copen"; }
 
 # note in dir logbook
@@ -227,7 +214,7 @@ note() {
 
 # use fzf cat files
 cf(){
-   ls -p | grep -v / | fzf --preview 'bat {} --style=full --color=always' --preview-window=right:80%:wrap 
+   ls -p | grep -v / | fzf --preview 'cat {} ' --preview-window=right:80%:wrap 
 }
 
 # pyenv
@@ -243,15 +230,6 @@ vf() {
 
     if [ -n "$selected_file" ]; then
         vi "$selected_file"
-    fi
-}
-
-# 
-vi() {
-    if command -v nvim &>/dev/null; then
-        nvim "$@"
-    else
-        vim "$@"
     fi
 }
 
