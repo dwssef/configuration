@@ -29,7 +29,7 @@ function linkDotfile {
 function setup_vi {
     mkdir -p ~/.vim/pack/tpope/start
     cd ~/.vim/pack/tpope/start
-    git clone https://tpope.io/vim/commentary.git
+    git clone https://github.com/tpope/vim-commentary.git
     vim -u NONE -c "helptags commentary/doc" -c q
     git clone https://github.com/easymotion/vim-easymotion.git ~/.vim/pack/plugins/start/vim-easymotion
 }
