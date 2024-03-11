@@ -198,6 +198,24 @@ function check_proxy {
 
 }
 
+function install_docker-compose {
+    echo "docker-compose install"
+    if command -v docker-compose &>/dev/null; then
+        echo "docker-compose installed"
+        return 0
+    else
+        download_url=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url | grep linux-x86_64 | cut -d '"'
+        curl -fL "$download_url" -o "$home_dir/docker-compose"
+        if [ $? -eq 0 ]; then
+            echo "docker-compose installed successfully"
+            chmod +x "$home_dir/docker-compose"
+            sudo mv "$home_dir/docker-compose" /usr/bin/docker-compose
+        else
+            echo "docker-compose installed failed"
+        fi
+    fi
+}
+
 function EXIT {
     echo "exit"
     exit 0
@@ -207,6 +225,7 @@ function test {
     echo "this is test"
 }
 
+# install_docker-compose
 # apt_install tmux
 # apt_install zsh
 # apt_install ripgrep
