@@ -13,6 +13,9 @@ alias sz="source $HOME/.bashrc"
 alias ports='netstat -tulanp'
 alias server='python3 -m http.server'
 alias bak='cp $1 $1.bak'
+alias cdf='cd "$(ls -d */ | fzf)"'
+alias zz='if [ ! -n "$1" ]; then eval "$(cat ~/.command | fzf)"; fi'
+alias vzz="vi ~/.command"
 
 alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
 export LANG="en_US.UTF-8"
@@ -21,16 +24,15 @@ hs() {
 	history | vi -
 }
 
-function cu {
+cu() {
     local count=$1
     if [ -z "${count}" ]; then
         count=1
     fi
     local path=""
-    for i in $(seq 1 ${count}); do
+    for ((i = 0; i < count; i++)); do
         path="${path}../"
     done
-    cd $path
+    cd "$path" || return 1
 }
-
 EOF
