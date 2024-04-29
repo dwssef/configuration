@@ -20,7 +20,7 @@ fzf-down() {
     # fzf-down --tac --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
 ,gh() {
   is_in_git_repo || return
-  git log "$@" --all --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --color=always |
+  git log "$@" --all --date=short --format="%C(green)%C(bold)%ad %C(auto)%h%d %s (%an)" --color=always |
   fzf-down --ansi --no-sort --multi --bind 'ctrl-s:toggle-sort' \
     --header 'Press CTRL-S to toggle sort' \
     --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --stat --color=always' |
@@ -223,13 +223,29 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # 定义一个名为'vf'的函数，用于通过fzf选择文件，并使用bat预览文件内容后打开选定文件
+# vf() {
+#     local selected_file
+#     # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
+#     selected_file=$(fzf --preview 'cat {}')
+
+#     if [ -n "$selected_file" ]; then
+#         vi "$selected_file"
+#     fi
+# }
 vf() {
     local selected_file
-    # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
-    selected_file=$(fzf --preview 'cat {}')
-
-    if [ -n "$selected_file" ]; then
-        vi "$selected_file"
+    local target_dir="$1"  # 获取目录参数
+    if [ -z "$target_dir" ]; then
+        target_dir="."  # 如果未提供目录参数，默认为当前目录
+    fi
+    
+    if [ -d "$target_dir" ]; then  # 检查目录是否存在
+        selected_file=$(find "$target_dir" -type f | fzf --preview 'cat {}')  # 使用 fzf 列出目录下的文件
+        if [ -n "$selected_file" ]; then
+            nvim "$selected_file"
+        fi
+    else
+        echo "目录 $target_dir 不存在或不可访问"
     fi
 }
 

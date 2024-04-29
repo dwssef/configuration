@@ -204,7 +204,7 @@ function install_docker-compose {
         echo "docker-compose installed"
         return 0
     else
-        download_url=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url | grep linux-x86_64 | cut -d '"'
+        download_url=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url | grep linux-x86_64 | cut -d '"')
         curl -fL "$download_url" -o "$home_dir/docker-compose"
         if [ $? -eq 0 ]; then
             echo "docker-compose installed successfully"

@@ -23,6 +23,7 @@ alias sz='source ~/.zshrc'
 alias vi='nvim'
 alias vv='vi ~/.config/nvim/init.vim'
 alias vz='vi ~/.zshrc'
+alias va='vi ~/.alias'
 alias hf="history|fzf"
 alias l="ls -alh"
 alias lt="tree -C -L 2"
@@ -51,6 +52,7 @@ alias proxy_test="curl -vv https://google.com"
 # alias code='code.exe --remote wsl+Ubuntu "$(pwd)"'
 # alias code="/home/dw/.vscode-server/bin/695af097c7bd098fbf017ce3ac85e09bbc5dda06/bin/remote-cli/code"
 alias time='/usr/bin/time'
+alias gsize='function __gsize() { curl -s "https://api.github.com/repos/$1" | jq ".size" | numfmt --to=iec --from-unit=1024; }; __gsize'
 
 complete -W "\$(gf -list)" g
 
