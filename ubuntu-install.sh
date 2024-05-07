@@ -77,6 +77,17 @@ function install_git_alias {
 
 }
 
+function create_smug_config {
+  home_dir=$(eval echo ~$USER)
+
+  config_dir="$home_dir/.config/smug"
+  mkdir -p "$config_dir"
+
+  cp "test.yml" "$config_dir/"
+
+  echo "Configuration created successfully in $config_dir"
+}
+
 function install_smug {
 
     if command -v smug &>/dev/null; then
@@ -95,6 +106,7 @@ function install_smug {
             echo "mv smug to /usr/local/bin"
             sudo mv "$home_dir/smug" /usr/local/bin
             echo "smug installed successfully"
+            create_smug_config
         else
             echo "smug installation failed"
         fi

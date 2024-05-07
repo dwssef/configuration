@@ -1,0 +1,8 @@
+session: wsl
+root: ~
+windows:
+  - name: vi
+    root: ~
+  - name: exec
+    root: ~
+  - name: other
