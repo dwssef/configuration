@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+import tomli
 
 if len(sys.argv) == 2:
     search_text = sys.argv[1]
@@ -8,24 +9,29 @@ else:
     print("need a search object")
     sys.exit()
 
-user = "czy_1"
-token = "6879--iHJH8waDbZ5iiJd2NufVuPcZRZjrO74Jzj8Xwyw4gw"
+try:
+    with open(".env", "rb") as f:
+        toml_dict = tomli.load(f)
+        if toml_dict:
+            user = toml_dict["hy_user"]
+            token = toml_dict["hy_token"]
+        else:
+            print("The .env file are empty")
+except FileNotFoundError:
+    print("The .env file does not exist.")
+    sys.exit()
+
 headers = {"Authorization": f"Bearer {token}"}
 
-# endp = "https://api.hypothes.is/api/search?limit=200&user=czy_1&any=heap"
-endp = f"https://api.hypothes.is/api/search?limit=200&user=czy_1&any={search_text}"
+endp = f"https://api.hypothes.is/api/search?limit=200&user={user}&any={search_text}"
 
 res = requests.get(endp, headers=headers)
-# print(res.json())
 r = res.json()
-
-print(json.dumps(r))
 
 dic = {}
 for i in range(len(r['rows'])):
     dic["text"] = r['rows'][i]['text']
     dic["title"] = r['rows'][i]['document']['title'][0]
-    # print(r['rows'][i]['target'][0]['selector'][2]['exact'])
     dic["exact"] = r['rows'][i]['target'][0]['selector'][2]['exact']
     dic["links"] = r['rows'][i]['links']['incontext']
-    print(json.dumps(dic, indent=4))
+    print(json.dumps(dic, ensure_ascii=False, indent=4))
