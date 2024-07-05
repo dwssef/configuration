@@ -1,6 +1,11 @@
 # [ -f ~/.bashrc ] && source ~/.bashrc
 # -------------
 
+EDITOR=nvim
+if [ "$TERM_PROGRAM" = "vscode" ]; then
+    export EDITOR="code"
+fi
+
 is_in_git_repo() {
   git rev-parse HEAD > /dev/null 2>&1
 }
@@ -17,14 +22,14 @@ fzf-down() {
   cut -d$'\t' -f1
 }
 
-    # fzf-down --tac --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+# check `git show <commit>` in $EDITOR
 ,gh() {
   is_in_git_repo || return
   git log "$@" --all --date=short --format="%C(green)%C(bold)%ad %C(auto)%h%d %s (%an)" --color=always |
   fzf-down --ansi --no-sort --multi --bind 'ctrl-s:toggle-sort' \
     --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --stat --color=always' |
-  grep -o "[a-f0-9]\{7,\}"
+    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --stat --color=always' \
+    --bind "enter:execute:echo {} | grep -o \"[a-f0-9]\{7,\}\" | xargs -I {} git show {} | $EDITOR -"
 }
 
 # View changed but not committed documents
@@ -36,7 +41,7 @@ fzf-down() {
   cut -c4- | sed 's/.* -> //'
 }
 
-# show branch commit log
+# View the commit log for each branch
 ,gb() {
   is_in_git_repo || return
   git branch -a --color=always | grep -v '/HEAD\s' | sort |
@@ -81,29 +86,23 @@ fzf-down() {
   fi
 }
 
-cde(){
+cde() {
 	cd /mnt/e/0_WORKSPACE;
 }
 
-shrug(){
+shrug() {
     echo -n "¯\_(ツ)_/¯" |clip.exe;
 }
 
-mkcd () { mkdir -p "$1" && cd "$1"; }
+mkcd() { mkdir -p "$1" && cd "$1"; }
 
-function cu {
-    local count=$1;
-    if [ -z "${count}" ]; then
-        count=1;
-    fi
+cu() { 
+    local count="${1:-1}";
     local path="";
-    # bash
-    # for i in $(seq 1 ${count}); do
-    # zsh
-    for i in {1..${count}};do
+    for ((i = 1; i <= count; i++)); do
         path="${path}../";
     done
-    cd $path;
+    cd "$path";
 }
 
 # backup file
@@ -111,49 +110,81 @@ bak() {
 	cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
 }
 
-so () {
+so() {
 	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*)
 	echo $s 2>&1 | clipcopy
 	echo $s
 	chrome "https://www.google.com/search?q=site:stackoverflow.com $s";
 }
 
-goo () {
+goo() {
 	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*) # Error
 	echo $s 2>&1 | clipcopy
 	echo $s
 	chrome "https://www.google.com/search?q=$s";
 }
 
-h2d () {
-	echo $[16#$1];
+# Fast execution of commands
+command_dir=~/.command
+source $command_dir/*.sh
+zz() {
+    # set -x
+    local dir="$1"
+
+    if [[ ! -n "$1" ]]; then
+        local dir=$command_dir
+    fi
+    
+    if [[ ! -d "$dir" ]]; then
+        echo "Directory '$dir' does not exist"
+        return 1
+    fi
+
+    while true; do
+        local selected_file
+        selected_file=$(ls "$dir" | fzf)
+        if [[ -z "$selected_file" ]]; then
+            return 1
+        fi
+
+        if [[ "$selected_file" == *.sh ]]; then
+            local functions
+            functions=$(grep -oP '^\s*[\w-]+\s*\(\)\s*\{' "$dir/$selected_file" | sed 's/[ (){]//g')
+
+            if [[ -z "$functions" ]]; then
+                continue
+            fi
+
+            local selected_function
+            selected_function=$(echo "$functions" | fzf)
+            if [[ -z "$selected_function" ]]; then
+                continue
+            fi
+
+            $selected_function
+            return 0
+        else
+            eval $(cat $dir/$selected_file | fzf)
+            return 0
+        fi
+    done
+    # set +x
 }
 
-d2b () {
-    echo "obase=2;$1"|bc
+vzz() {
+  local dir="$1"
+
+  if [[ ! -n "$1" ]]; then
+    local dir=~/.command
+    vi $dir/command
+  fi
 }
 
-zz () {
-	if [ ! -n "$1" ] ;then
-		eval $(cat ~/.command|fzf)
-		# cat ~/.command|fzf|clipcopy;
-	else
-		# export ZZ_FILE=$(pwd)"/"$1
-		export ZZ_FILE=$1;
-		# eval $(cat $ZZ_FILE|fzf)
-		cat $ZZ_FILE|fzf|clipcopy;
-	fi
-}
-
-zb () {
+zb() {
 	cat ~/.browse|fzf;
 }
 
-vzz () {
-	vi ~/.command
-}
-
-hp () {
+hp() {
 	python3 /home/dw/.hypothesis.py $1 | jq
 }
 
@@ -162,12 +193,6 @@ tmp-upload() {
     echo "curl -o $1 $download_url"
     echo "curl -o $1 $download_url" | clipcopy
     echo "The above command has been copied to clipboard."
-}
-
-fcd() {
-    local dir
-    dir=$(dirs -v | fzf --height 40% --reverse --border --ansi)
-    cd ~$(echo "$dir" | awk '{print $1}')
 }
 
 todo() {
@@ -197,7 +222,7 @@ unproxy() {
 }
 
 # Search and browse text quickly in editor
-function rgv() { vi -c "silent grep $1" -c "copen"; }
+rgv() { vi -c "silent grep $1" -c "copen"; }
 
 # note in dir logbook
 NOTE_DIRECTORY="/mnt/d/soft/Dropbox/logbook"
@@ -212,26 +237,7 @@ note() {
 	fi
 }
 
-# use fzf cat files
-cf(){
-   ls -p | grep -v / | fzf --preview 'cat {} ' --preview-window=right:80%:wrap 
-}
-
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# 定义一个名为'vf'的函数，用于通过fzf选择文件，并使用bat预览文件内容后打开选定文件
-# vf() {
-#     local selected_file
-#     # selected_file=$(fzf --preview 'bat --style=numbers --color=always {}')
-#     selected_file=$(fzf --preview 'cat {}')
-
-#     if [ -n "$selected_file" ]; then
-#         vi "$selected_file"
-#     fi
-# }
+# Preview file content via fzf, open file with $EDITOR
 vf() {
     local selected_file
     local target_dir="$1"  # 获取目录参数
@@ -242,7 +248,7 @@ vf() {
     if [ -d "$target_dir" ]; then  # 检查目录是否存在
         selected_file=$(find "$target_dir" -type f | fzf --preview 'cat {}')  # 使用 fzf 列出目录下的文件
         if [ -n "$selected_file" ]; then
-            nvim "$selected_file"
+            $EDITOR "$selected_file"
         fi
     else
         echo "目录 $target_dir 不存在或不可访问"

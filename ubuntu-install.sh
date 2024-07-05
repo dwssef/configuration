@@ -38,14 +38,6 @@ function apt_install {
 
 }
 
-function git_config {
-
-    curl https://raw.githubusercontent.com/GitAlias/gitalias/main/gitalias.txt -o gitalias.txt
-    git config --global include.path gitalias.txt
-    curl -X GET https://networkcalc.com/api/dns/lookup/raw.githubusercontent.com|jq -c '.records|.A[]|.address+" raw.githubusercontent.com"'|sed 's/\"//g' >> /etc/hosts
-
-}
-
 function install_fzf {
     if command -v fzf &>/dev/null; then
         echo "fzf installed"
@@ -74,6 +66,10 @@ function install_git_alias {
 
     curl https://raw.githubusercontent.com/GitAlias/gitalias/main/gitalias.txt -o ~/.gitalias
     git config --global include.path ~/.gitalias
+    
+    git config --global alias.prev 'checkout HEAD~'
+    git config --global alias.next '! f() { git log --reverse --pretty=%H ${1:-master} | grep -A 1 $(git rev-parse HEAD) | tail -n1 | xargs git checkout; }; f'
+    git config --global alias.difp 'diff HEAD~..HEAD'
 
 }
 
@@ -163,26 +159,6 @@ function install_nvim {
     fi
 }
 
-function install_conda {
-
-    if command -v conda &>/dev/null; then
-        echo "conda installed"
-        return 0
-    else
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-        bash Miniconda3-latest-Linux-x86_64.sh -b -u -p /usr/local/miniconda3
-        /usr/local/miniconda3/bin/conda init zsh
-
-        if [ $? -eq 0 ]; then
-            echo "conda installed successfully"
-            pip install pynvim
-            conda config --set auto_activate_base false
-        else
-            echo "conda installation failed"
-        fi
-    fi
-}
-
 function install_pyenv {
 
     if command -v pyenv &>/dev/null; then
@@ -244,7 +220,6 @@ function test {
 # apt_install fd-find
 # apt_install bat # batcat
 # apt_install universal-ctags
-# git_config
 # install_fzf
 # install_z_jmp
 # install_git_alias
