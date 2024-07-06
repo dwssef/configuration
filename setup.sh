@@ -50,9 +50,9 @@ setup_zz() {
     linkDotfile .command ~/.command/command
 }
 
-linkDotfile ~/.bash_profile
+linkDotfile .bash_profile ~/.bash_profile
 # linkDotfile ~/.zshrc
- linkDotfile ~/.tmux.conf
+ linkDotfile .tmux.conf ~/.tmux.conf
  linkDotfile vimrc.server ~/.vimrc
 # source bashrc_setup.sh
 # source centos_install.sh

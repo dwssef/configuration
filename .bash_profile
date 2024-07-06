@@ -1,9 +1,12 @@
-# [ -f ~/.bashrc ] && source ~/.bashrc
-# -------------
-
 EDITOR=nvim
 if [ "$TERM_PROGRAM" = "vscode" ]; then
     export EDITOR="code"
+else
+    if [ -n "$BASH_VERSION" ]; then
+      if [ -f ~/.bashrc ]; then
+          source ~/.bashrc
+      fi
+    fi
 fi
 
 is_in_git_repo() {
@@ -126,7 +129,11 @@ goo() {
 
 # Fast execution of commands
 command_dir=~/.command
-source $command_dir/*.sh
+if [ -d "$command_dir" ] && ls "$command_dir"/*.sh &>/dev/null; then
+    for file in "$command_dir"/*.sh; do
+        [ -r "$file" ] && source "$file"
+    done
+fi
 zz() {
     # set -x
     local dir="$1"
@@ -200,14 +207,15 @@ todo() {
 }
 
 # setting proxy
+proxy_port=17254
 export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
-    export ALL_PROXY="socks5://$host_ip:17254"
-    export http_proxy="http://$host_ip:17254"
-    export https_proxy="http://$host_ip:17254"
-    export HTTP_PROXY="http://$host_ip:17254"
-    export HTTPS_PROXY="http://$host_ip:17254"
-    export all_proxy="socks5://$host_ip:17254"
+    export ALL_PROXY="socks5://$host_ip:$proxy_port"
+    export http_proxy="http://$host_ip:$proxy_port"
+    export https_proxy="http://$host_ip:$proxy_port"
+    export HTTP_PROXY="http://$host_ip:$proxy_port"
+    export HTTPS_PROXY="http://$host_ip:$proxy_port"
+    export all_proxy="socks5://$host_ip:$proxy_port"
     echo "set up proxy"
 }
 
