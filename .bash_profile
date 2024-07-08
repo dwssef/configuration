@@ -30,9 +30,10 @@ fzf-down() {
   is_in_git_repo || return
   git log "$@" --all --date=short --format="%C(green)%C(bold)%ad %C(auto)%h%d %s (%an)" --color=always |
   fzf-down --ansi --no-sort --multi --bind 'ctrl-s:toggle-sort' \
-    --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --stat --color=always' \
-    --bind "enter:execute:echo {} | grep -o \"[a-f0-9]\{7,\}\" | xargs -I {} git show {} | $EDITOR -"
+    --bind 'alt-e:execute(grep -o "[a-f0-9]\\{7,\\}" <<< {} | xargs -I % sh -c "git show % | $EDITOR -")' \
+    --header 'Press CTRL-S to toggle sort | Press ALT-E to edit commit' \
+    --preview 'grep -o "[a-f0-9]\\{7,\\}" <<< {} | xargs git show --stat --color=always' |
+  grep -o "[a-f0-9]\\{7,\\}"
 }
 
 # View changed but not committed documents
