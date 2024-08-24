@@ -36,6 +36,18 @@ fzf-down() {
   grep -o "[a-f0-9]\\{7,\\}"
 }
 
+# List all commits for a given file and view them
+,gff() {
+  is_in_git_repo || return
+  local file=${1:-.bash_profile}
+  git log --oneline -- "$file" |
+  fzf-down --ansi --no-sort --multi --bind 'ctrl-s:toggle-sort' \
+    --bind "alt-e:execute(grep -o '[a-f0-9]\\{7,\\}' <<< {} | xargs -I % sh -c 'git show %:$file | $EDITOR -')" \
+    --header "Press CTRL-S to toggle sort | Press ALT-E to edit commit | File: $file" \
+    --preview "grep -o '[a-f0-9]\\{7,\\}' <<< {} | xargs -I % sh -c 'git show --stat --color=always %'" |
+  grep -o "[a-f0-9]\\{7,\\}"
+}
+
 # View changed but not committed documents
 ,gf() {
   is_in_git_repo || return
