@@ -4,7 +4,6 @@ tee -a $HOME/.bashrc <<'EOF'
 alias l="ls"
 alias ll='ls -lh'
 alias la='ls -alh'
-alias c='clear'
 alias p='python3'
 alias vz="vi $HOME/.bashrc"
 alias vv="vi $HOME/.vimrc"
@@ -21,6 +20,13 @@ export LANG="en_US.UTF-8"
 
 hs() {
 	history | vi -
+}
+
+c() {
+    if [ -n "$TMUX" ]; then
+        tmux clear-history
+    fi
+    clear
 }
 
 # Solve .bash_profile not working issue in vscode terminal
