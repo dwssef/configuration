@@ -260,14 +260,19 @@ note() {
 
 # Preview file content via fzf, open file with $EDITOR
 vf() {
-    local selected_file
-    local target_dir="$1"  # 获取目录参数
-    if [ -z "$target_dir" ]; then
-        target_dir="."  # 如果未提供目录参数，默认为当前目录
+    local target_dir
+    local max_depth
+
+    if [[ -d "$1" ]]; then
+        target_dir="$1"
+        max_depth="${2:-1}"
+    else
+        target_dir="."
+        max_depth="${1:-1}"
     fi
-    
-    if [ -d "$target_dir" ]; then  # 检查目录是否存在
-        selected_file=$(find "$target_dir" -type f | fzf --preview 'cat {}')  # 使用 fzf 列出目录下的文件
+
+    if [ -d "$target_dir" ]; then
+        selected_file=$(find "$target_dir" -maxdepth "$max_depth" -type f | fzf --preview 'cat {}')
         if [ -n "$selected_file" ]; then
             $EDITOR "$selected_file"
         fi
