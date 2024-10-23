@@ -50,11 +50,34 @@ setup_zz() {
     linkDotfile .command ~/.command/command
 }
 
-linkDotfile .bash_profile ~/.bash_profile
+append_to_bashrc() {
+    tee -a "$HOME/.bashrc" <<'EOF'
+#######################################
+[ -f ~/.common ] && source ~/.common
+EOF
+}
+
+# Function to download z.sh and update .bashrc
+setup_z_jump() {
+    local url="https://raw.githubusercontent.com/rupa/z/refs/heads/master/z.sh"
+    if wget -q "$url" -O "$HOME/.z.sh"; then
+        echo "Download successful. Updating .bashrc..."
+        tee -a "$HOME/.bashrc" <<'EOF'
+[ -f ~/.z.sh ] && source ~/.z.sh
+EOF
+    else
+        echo "Download z jump  failed."
+    fi
+}
+
+# linkDotfile .bash_profile ~/.bash_profile
+# linkDotfile .common ~/.common
 # linkDotfile ~/.zshrc
- linkDotfile .tmux.conf ~/.tmux.conf
- linkDotfile vimrc.server ~/.vimrc
+# linkDotfile .tmux.conf ~/.tmux.conf
+# linkDotfile vimrc.server ~/.vimrc
 # source bashrc_setup.sh
 # source centos_install.sh
-setup_vi
-setup_zz
+# setup_vi
+# setup_zz
+# setup_z_jump
+# append_to_bashrc

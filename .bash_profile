@@ -1,4 +1,4 @@
-EDITOR=nvim
+export EDITOR="vim"
 if [ "$TERM_PROGRAM" = "vscode" ]; then
     export EDITOR="code"
 else
@@ -223,13 +223,17 @@ todo() {
 proxy_port=17254
 export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 proxy() {
-    export ALL_PROXY="socks5://$host_ip:$proxy_port"
-    export http_proxy="http://$host_ip:$proxy_port"
-    export https_proxy="http://$host_ip:$proxy_port"
-    export HTTP_PROXY="http://$host_ip:$proxy_port"
-    export HTTPS_PROXY="http://$host_ip:$proxy_port"
-    export all_proxy="socks5://$host_ip:$proxy_port"
-    echo "set up proxy"
+    if export | grep -i proxy; then
+        echo "Proxy is set"
+    else
+        export ALL_PROXY="socks5://$host_ip:$proxy_port"
+        export http_proxy="http://$host_ip:$proxy_port"
+        export https_proxy="http://$host_ip:$proxy_port"
+        export HTTP_PROXY="http://$host_ip:$proxy_port"
+        export HTTPS_PROXY="http://$host_ip:$proxy_port"
+        export all_proxy="socks5://$host_ip:$proxy_port"
+        echo "set up proxy"
+    fi
 }
 
 unproxy() {
@@ -237,8 +241,8 @@ unproxy() {
     unset all_proxy
     unset http_proxy  
     unset https_proxy 
-    unset hTTP_PROXY  
-    unset hTTPS_PROXY 
+    unset HTTP_PROXY  
+    unset HTTPS_PROXY 
     echo "unproxy"
 }
 

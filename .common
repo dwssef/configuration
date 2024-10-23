@@ -1,0 +1,61 @@
+export LANG="en_US.UTF-8"
+
+# Alias
+alias l="ls"
+alias ll='ls -lh'
+alias la='ls -alh'
+
+alias vc='vi $HOME/.common'
+alias vz="vi $HOME/.bashrc"
+alias vv="vi $HOME/.vimrc"
+alias vb="vi $HOME/.bash_profile"
+alias sz="source $HOME/.bashrc"
+
+alias p='python3'
+alias pip="python3 -m pip"
+alias ports='netstat -tulanp'
+alias server='python3 -m http.server'
+
+alias dud='du -d 1 -h'
+alias cdf='cd "$(ls -d */ | fzf)"'
+alias fzf="fzf --reverse -m -0"
+
+alias dps="docker ps -a"
+alias dmi="docker images -a"
+
+alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
+
+alias gsize='function __gsize() { curl -s "https://api.github.com/repos/$1" | jq ".size" | numfmt --to=iec --from-unit=1024; }; __gsize'
+
+alias proxy_test="curl -vv www.google.com"
+
+alias lt='tree -C -L'
+
+
+# Function
+,z() {
+    selected=$(_z 2>&1 | fzf)
+    if [[ -n "$selected" ]]; then
+        _z 2>&1 $selected
+    fi
+}
+
+c() {
+    if [ -n "$TMUX" ]; then
+        tmux clear-history
+    fi
+    clear
+}
+
+hs() {
+    history | vi -
+}
+
+# Solve .bash_profile not working issue in vscode terminal
+if [ "$TERM_PROGRAM" = "vscode" ]; then
+    [ -f ~/.bash_profile ] && source ~/.bash_profile
+fi
+
+# Fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_OPTS='-m --height 50% --border'
