@@ -7,6 +7,7 @@ script_directory=$(dirname "$script_path")
 home_dir="$HOME"
 APT_UPDATE=1
 GITHUB_PROXY="https://ghp.ci/"
+dotfilesDir=$(pwd)
 
 sed -i "s/^APT_UPDATE=.*/APT_UPDATE=1/" $script_path
 
@@ -48,12 +49,6 @@ function install_fzf {
         ~/.fzf/install
 
     fi
-
-}
-
-function install_z_jmp {
-
-    wget "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/master/z.sh"
 
 }
 
@@ -215,6 +210,94 @@ function test {
     echo "this is test"
 }
 
+linkDotfile() {
+    dest="${HOME}/${1}"
+    dateStr=$(date +%Y-%m-%d-%H%M)
+
+    if [ $# -eq 1 ]; then
+        src="${1}"
+    elif [ $# -eq 2 ]; then
+        src="${1}"
+        dest="${2}"
+    else
+        echo "Usage: linkDotfile [source_file] [destination_file (optional)]"
+        return 1
+    fi
+
+    if [ -h "${dest}" ]; then
+        # Existing symlink 
+        echo "Removing existing symlink: ${dest}"
+        rm "${dest}"
+
+    elif [ -f "${dest}" ]; then
+        # Existing file
+        echo "Backing up existing file: ${dest}"
+        mv "${dest}" "${dest}.bak.${dateStr}"
+
+    elif [ -d "${dest}" ]; then
+        # Existing dir
+        echo "Backing up existing dir: ${dest}"
+        mv "${dest}" "${dest}.${dateStr}"
+    fi
+
+    echo "Creating new symlink: ${dest}"
+    ln -s "${dotfilesDir}/${src}" "${dest}"
+}
+
+setup_vi() {
+    mkdir -p ~/.vim/pack/tpope/start
+    cd ~/.vim/pack/tpope/start
+    git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git"
+    vim -u NONE -c "helptags commentary/doc" -c q
+    git clone "${GITHUB_PROXY:-""}https://github.com/easymotion/vim-easymotion.git" ~/.vim/pack/plugins/start/vim-easymotion
+}
+
+setup_zz() {
+    mkdir ~/.command
+    cd ~/.command
+    wget "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
+    linkDotfile .command ~/.command/command
+}
+
+append_to_bashrc() {
+    tee -a "$HOME/.bashrc" <<'EOF'
+#######################################
+[ -f ~/.common ] && source ~/.common
+EOF
+}
+
+# Function to download z.sh and update .bashrc
+setup_z_jump() {
+    local url="${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/refs/heads/master/z.sh"
+    if wget -q "$url" -O "$HOME/.z.sh"; then
+        echo "Download successful. Updating .bashrc..."
+        tee -a "$HOME/.bashrc" <<'EOF'
+[ -f ~/.z.sh ] && source ~/.z.sh
+EOF
+    else
+        echo "Download z jump  failed."
+    fi
+}
+
+################
+# Link Dotfile #
+################
+
+# linkDotfile .bash_profile ~/.bash_profile
+# linkDotfile .common ~/.common
+# linkDotfile ~/.zshrc
+# linkDotfile .tmux.conf ~/.tmux.conf
+# linkDotfile vimrc.server ~/.vimrc
+# append_to_bashrc
+# setup_vi
+# setup_zz
+# setup_z_jump
+
+
+################
+# Install soft #
+################
+
 # install_docker-compose
 # apt_install tmux
 # apt_install zsh
@@ -223,7 +306,6 @@ function test {
 # apt_install bat # batcat
 # apt_install universal-ctags
 # install_fzf
-# install_z_jmp
 # install_git_alias
 # install_ipcalc
 # check_proxy
@@ -231,13 +313,14 @@ function test {
 # install_smug
 # install_conda
 
-IFS=$'\n'
-result=""
-for f in $(declare -F); do
-   result="${result}${f:11}\n"
-done
 
-while true; do
-    select_func=$(echo -e "$result" | fzf)
-    eval "$select_func"
-done
+# IFS=$'\n'
+# result=""
+# for f in $(declare -F); do
+#    result="${result}${f:11}\n"
+# done
+
+# while true; do
+#     select_func=$(echo -e "$result" | fzf)
+#     eval "$select_func"
+# done
