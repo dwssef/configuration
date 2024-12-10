@@ -15,3 +15,4 @@ smug start $(smug list|fzf)
 smug stop $(smug list|fzf)
 rg -l namedtuple | xargs wc -l | sort | awk '{print $2}'
 python3 -c "from rich import print;print(dir(__builtins__))"
+git config --global alias.clone-https '!f() { git clone https://ghp.ci/${1#https://}; }; f'

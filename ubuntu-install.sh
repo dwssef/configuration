@@ -6,6 +6,7 @@ script_path=$(readlink -f "$0")
 script_directory=$(dirname "$script_path")
 home_dir="$HOME"
 APT_UPDATE=1
+GITHUB_PROXY="https://ghp.ci/"
 
 sed -i "s/^APT_UPDATE=.*/APT_UPDATE=1/" $script_path
 
@@ -43,7 +44,7 @@ function install_fzf {
         echo "fzf installed"
         return 0
     else
-        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        git clone --depth 1 "${GITHUB_PROXY:-""}https://github.com/junegunn/fzf.git" ~/.fzf
         ~/.fzf/install
 
     fi
@@ -52,19 +53,20 @@ function install_fzf {
 
 function install_z_jmp {
 
-    wget https://raw.githubusercontent.com/rupa/z/master/z.sh
+    wget "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/master/z.sh"
 
 }
 
 function install_ohmyzsh {
 
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL ${GITHUB_PROXY:-""}https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 }
 
 function install_git_alias {
 
-    curl https://raw.githubusercontent.com/GitAlias/gitalias/main/gitalias.txt -o ~/.gitalias
+    wget -O ~/.gitalias "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/GitAlias/gitalias/main/gitalias.txt"
+
     git config --global include.path ~/.gitalias
     
     git config --global alias.prev 'checkout HEAD~'
@@ -90,10 +92,10 @@ function install_smug {
         echo "smug installed"
         return 0
     else
-        download_url=$(curl -s https://api.github.com/repos/ivaaaan/smug/releases/latest \
-                    | grep browser_download_url \
-                    | grep Linux_x86 \
-                    | cut -d '"' -f4)
+        download_url=$(wget -qO- "${GITHUB_PROXY:-""}https://api.github.com/repos/ivaaaan/smug/releases/latest" \
+                        | grep browser_download_url \
+                        | grep Linux_x86 \
+                        | cut -d '"' -f4)
 
         curl -fL "$download_url" -o "$home_dir/smug_latest.tar.gz"
 
