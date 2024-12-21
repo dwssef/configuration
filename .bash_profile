@@ -119,21 +119,21 @@ cu() {
 
 # backup file
 bak() {
-	cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
+  cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
 }
 
 so() {
-	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*)
-	echo $s 2>&1 | clipcopy
-	echo $s
-	chrome "https://www.google.com/search?q=site:stackoverflow.com $s";
+  s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*)
+  echo $s 2>&1 | clipcopy
+  echo $s
+  chrome "https://www.google.com/search?q=site:stackoverflow.com $s";
 }
 
 goo() {
-	s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*) # Error
-	echo $s 2>&1 | clipcopy
-	echo $s
-	chrome "https://www.google.com/search?q=$s";
+  s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*) # Error
+  echo $s 2>&1 | clipcopy
+  echo $s
+  chrome "https://www.google.com/search?q=$s";
 }
 
 # Fast execution of commands
@@ -197,11 +197,11 @@ vzz() {
 }
 
 zb() {
-	cat ~/.browse|fzf;
+  cat ~/.browse|fzf;
 }
 
 hp() {
-	python3 /home/dw/.hypothesis.py $1 | jq
+  python3 /home/dw/.hypothesis.py $1 | jq
 }
 
 tmp-upload() {
@@ -216,30 +216,41 @@ todo() {
 }
 
 # setting proxy
-proxy_port=17254
-export host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
-proxy() {
-    if export | grep -i proxy; then
-        echo "Proxy is set"
-    else
-        export ALL_PROXY="socks5://$host_ip:$proxy_port"
-        export http_proxy="http://$host_ip:$proxy_port"
-        export https_proxy="http://$host_ip:$proxy_port"
-        export HTTP_PROXY="http://$host_ip:$proxy_port"
-        export HTTPS_PROXY="http://$host_ip:$proxy_port"
-        export all_proxy="socks5://$host_ip:$proxy_port"
-        echo "set up proxy"
-    fi
+export host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d " ")
+
+set_proxy() {
+    local proxy_port=$1
+    local http_port=$2
+    export ALL_PROXY="socks5://$host_ip:$proxy_port"
+    export http_proxy="http://$host_ip:$http_port"
+    export https_proxy="http://$host_ip:$http_port"
+    export HTTP_PROXY="http://$host_ip:$http_port"
+    export HTTPS_PROXY="http://$host_ip:$http_port"
+    export all_proxy="socks5://$host_ip:$proxy_port"
+    echo "Set up proxy with SOCKS port $proxy_port and HTTP port $http_port"
 }
 
 unproxy() {
     unset ALL_PROXY
     unset all_proxy
-    unset http_proxy  
-    unset https_proxy 
-    unset HTTP_PROXY  
-    unset HTTPS_PROXY 
-    echo "unproxy"
+    unset http_proxy
+    unset https_proxy
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    export | grep -i proxy
+    echo "Unproxy"
+}
+
+proxy() {
+  [ -f "$HOME/.env" ] && source "$HOME/.env"
+  if [ "$V2RAY_ENABLED" -eq 1 ]; then
+      socks_port=10810
+      http_port=$((socks_port + 1))
+      set_proxy "$socks_port" "$http_port"
+  else
+      proxy_port=17254
+      set_proxy "$proxy_port" "$proxy_port"
+  fi
 }
 
 # Search and browse text quickly in editor
@@ -248,14 +259,14 @@ rgv() { vi -c "silent grep $1" -c "copen"; }
 # note in dir logbook
 NOTE_DIRECTORY="/mnt/d/soft/Dropbox/logbook"
 note() {
-	if [[ "$1" == "new" ]]; then
-		cd "$NOTE_DIRECTORY"
-		vi
-	elif [[ "$1" == "list" ]]; then
-		vi $(find /mnt/d/soft/Dropbox/logbook -type f -name "*.md" | fzf)
-	else
-		echo "Invalid command. Usage: note [new|list]"
-	fi
+  if [[ "$1" == "new" ]]; then
+    cd "$NOTE_DIRECTORY"
+    vi
+  elif [[ "$1" == "list" ]]; then
+    vi $(find /mnt/d/soft/Dropbox/logbook -type f -name "*.md" | fzf)
+  else
+    echo "Invalid command. Usage: note [new|list]"
+  fi
 }
 
 # Preview file content via fzf, open file with $EDITOR

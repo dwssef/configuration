@@ -285,6 +285,7 @@ EOF
 
 # linkDotfile .bash_profile ~/.bash_profile
 # linkDotfile .common ~/.common
+# linkDotfile env.template ~/.env
 # linkDotfile ~/.zshrc
 # linkDotfile .tmux.conf ~/.tmux.conf
 # linkDotfile vimrc.server ~/.vimrc
