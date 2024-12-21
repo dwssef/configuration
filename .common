@@ -51,6 +51,34 @@ hs() {
     history | vi -
 }
 
+h2d() { printf "%d\n" "$((16#$1))"; }
+
+d2h() { printf "%X\n" "$1"; }
+
+b2d() { printf "%d\n" "$((2#$1))"; }
+
+d2b() {
+    n=$1
+    r=""
+    while [ "$n" -gt 0 ]; do
+        r=$((n % 2))$r
+        n=$((n / 2))
+    done
+    echo "$r"
+}
+
+h2b() {
+    h2d "$1" | while read -r dec; do
+        d2b "$dec"
+    done
+}
+
+b2h() {
+    b2d "$1" | while read -r dec; do
+        d2h "$dec"
+    done
+}
+
 # Solve .bash_profile not working issue in vscode terminal
 if [ "$TERM_PROGRAM" = "vscode" ]; then
     [ -f ~/.bash_profile ] && source ~/.bash_profile

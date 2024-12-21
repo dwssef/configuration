@@ -102,10 +102,6 @@ fzf-down() {
   fi
 }
 
-cde() {
-	cd /mnt/e/0_WORKSPACE;
-}
-
 shrug() {
     echo -n "¯\_(ツ)_/¯" |clip.exe;
 }
