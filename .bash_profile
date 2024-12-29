@@ -304,3 +304,30 @@ sf() {
     cd /home/dw/.pyenv/versions/3.11.3/lib/python3.11
     rg -l $1 | xargs wc -l | sort
 }
+
+,cc() {
+    if [ "$#" -lt 1 ]; then
+        echo "Usage: compile_and_run <source_file> [-d]"
+        return 1
+    fi
+
+    source_file="$1"
+    output_file="${source_file%.*}"
+
+    keep_file=false
+    if [ "$2" == "-d" ]; then
+        keep_file=true
+    fi
+
+    gcc -g -o "$output_file" "$source_file"
+    if [ $? -ne 0 ]; then
+        echo "Compilation failed!"
+        return 1
+    fi
+
+    ./"$output_file"
+
+    if [ "$keep_file" = false ]; then
+        rm -f "$output_file"
+    fi
+}

@@ -79,6 +79,36 @@ b2h() {
     done
 }
 
+q() {
+    input="$1"
+    if [[ "$input" =~ ^0x[0-9a-fA-F]+$ ]]; then
+        base="16"
+        decimal=$(h2d "${input#0x}")
+    elif [[ "$input" =~ ^0[0-7]+$ ]]; then
+        base="8"
+        decimal=$((8#${input#0}))
+    elif [[ "$input" =~ ^[01]+$ ]]; then
+        base="2"
+        decimal=$(b2d "$input")
+    elif [[ "$input" =~ ^[0-9]+$ ]]; then
+        base="10"
+        decimal="$input"
+    else
+        echo "Invalid input"
+        return 1
+    fi
+
+    binary=$(d2b "$decimal")
+    hex=$(d2h "$decimal")
+    octal=$(printf "%o" "$decimal")
+
+    echo "Input: $input (base $base)"
+    echo "Decimal: $decimal"
+    echo "Binary: $binary"
+    echo "Octal: $octal"
+    echo "Hexadecimal: $hex"
+}
+
 # Solve .bash_profile not working issue in vscode terminal
 if [ "$TERM_PROGRAM" = "vscode" ]; then
     [ -f ~/.bash_profile ] && source ~/.bash_profile
