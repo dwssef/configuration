@@ -215,42 +215,42 @@ todo() {
     vi "$HOME/.todo.md"
 }
 
-# setting proxy
-export host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d " ")
-
+# Functions for setting and unsetting proxy
 set_proxy() {
     local proxy_port=$1
     local http_port=$2
+    local host_ip=$3
     export ALL_PROXY="socks5://$host_ip:$proxy_port"
+    export all_proxy="socks5://$host_ip:$proxy_port"
     export http_proxy="http://$host_ip:$http_port"
     export https_proxy="http://$host_ip:$http_port"
     export HTTP_PROXY="http://$host_ip:$http_port"
     export HTTPS_PROXY="http://$host_ip:$http_port"
-    export all_proxy="socks5://$host_ip:$proxy_port"
-    echo "Set up proxy with SOCKS port $proxy_port and HTTP port $http_port"
+    echo "Proxy set: SOCKS port $proxy_port, HTTP port $http_port"
 }
 
 unproxy() {
-    unset ALL_PROXY
-    unset all_proxy
-    unset http_proxy
-    unset https_proxy
-    unset HTTP_PROXY
-    unset HTTPS_PROXY
-    export | grep -i proxy
-    echo "Unproxy"
+    unset ALL_PROXY all_proxy http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+    echo "Proxy unset"
 }
 
 proxy() {
-  [ -f "$HOME/.env" ] && source "$HOME/.env"
-  if [ "$V2RAY_ENABLED" -eq 1 ]; then
-      socks_port=10810
-      http_port=$((socks_port + 1))
-      set_proxy "$socks_port" "$http_port"
-  else
-      proxy_port=17254
-      set_proxy "$proxy_port" "$proxy_port"
-  fi
+    # Load environment variables
+    [ -f "$HOME/.env" ] && source "$HOME/.env"
+
+    # Determine host IP
+    local host_ip=${PROXY_HOST_IP:-$(grep "nameserver" /etc/resolv.conf | awk '{print $2}')}
+
+    # Set proxy based on V2RAY_ENABLED flag
+    local proxy_port socks_port http_port
+    if [ "${V2RAY_ENABLED:-0}" -eq 1 ]; then
+        socks_port=10810
+        http_port=$((socks_port + 1))
+    else
+        socks_port=17254
+        http_port=17254
+    fi
+    set_proxy "$socks_port" "$http_port" "$host_ip"
 }
 
 # Search and browse text quickly in editor
