@@ -279,6 +279,36 @@ EOF
     fi
 }
 
+install_github_deb() {
+    repo=$1
+    file_type=$2
+
+    if [ -z "$repo" ] || [ -z "$file_type" ]; then
+        echo "Usage: install_github_deb <repo> <file_type>"
+        return 1
+    fi
+
+    deb_url=$(curl -s https://api.github.com/repos/$repo/releases/latest | grep browser_download_url | grep "$file_type" | cut -d '"' -f4 | grep -m 1 "$file_type")
+
+    if [ -z "$deb_url" ]; then
+        echo "Failed to get the download URL."
+        return 1
+    fi
+
+    echo "Downloading $file_type package from $deb_url..."
+    wget -q "$deb_url" -O package.deb
+
+    echo "Installing the package..."
+    sudo dpkg -i package.deb
+
+    # echo "Fixing missing dependencies..."
+    # sudo apt-get install -f -y
+
+    rm package.deb
+
+    echo "Installation completed."
+}
+
 ################
 # Link Dotfile #
 ################
@@ -302,8 +332,8 @@ EOF
 # install_docker-compose
 # apt_install tmux
 # apt_install zsh
-# apt_install ripgrep
-# apt_install fd-find
+# install_github_deb "sharkdp/fd" "amd64.deb"
+# install_github_deb "BurntSushi/ripgrep" "amd64.deb"
 # apt_install bat # batcat
 # apt_install universal-ctags
 # install_fzf
@@ -312,7 +342,6 @@ EOF
 # check_proxy
 # install_nvim
 # install_smug
-# install_conda
 
 
 # IFS=$'\n'
