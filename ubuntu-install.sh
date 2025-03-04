@@ -6,7 +6,7 @@ script_path=$(readlink -f "$0")
 script_directory=$(dirname "$script_path")
 home_dir="$HOME"
 APT_UPDATE=1
-GITHUB_PROXY="https://ghp.ci/"
+GITHUB_PROXY=""
 dotfilesDir=$(pwd)
 
 sed -i "s/^APT_UPDATE=.*/APT_UPDATE=1/" $script_path
@@ -76,7 +76,7 @@ function create_smug_config {
   config_dir="$home_dir/.config/smug"
   mkdir -p "$config_dir"
 
-  cp "test.yml" "$config_dir/"
+  cp "$script_directory/test.yml" "$config_dir/"
 
   echo "Configuration created successfully in $config_dir"
 }
@@ -245,19 +245,18 @@ linkDotfile() {
 }
 
 setup_vi() {
-    mkdir -p ~/.vim/pack/tpope/start
-    cd ~/.vim/pack/tpope/start
-    git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git"
-    vim -u NONE -c "helptags commentary/doc" -c q
+    mkdir -p ~/.vim/pack/tpope/start ~/.vim/pack/plugins/start
+    git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git" ~/.vim/pack/tpope/start/vim-commentary
+    vim -u NONE -c "helptags ~/.vim/pack/tpope/start/vim-commentary/doc" -c q
     git clone "${GITHUB_PROXY:-""}https://github.com/easymotion/vim-easymotion.git" ~/.vim/pack/plugins/start/vim-easymotion
 }
 
 setup_zz() {
-    mkdir ~/.command
-    cd ~/.command
-    wget "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
-    linkDotfile .command ~/.command/command
+    mkdir -p ~/.command
+    wget -O ~/.command/fzf-git.sh "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
+    linkDotfile ~/.command ~/.command/command
 }
+
 
 append_to_bashrc() {
     tee -a "$HOME/.bashrc" <<'EOF'
@@ -315,7 +314,7 @@ install_github_deb() {
 
 # linkDotfile .bash_profile ~/.bash_profile
 # linkDotfile .common ~/.common
-# linkDotfile env.template ~/.env
+# cp env.template ~/.env
 # linkDotfile ~/.zshrc
 # linkDotfile .tmux.conf ~/.tmux.conf
 # linkDotfile vimrc.server ~/.vimrc
