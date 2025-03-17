@@ -211,15 +211,16 @@ function test {
 }
 
 linkDotfile() {
-    dest="${HOME}/${1}"
-    dateStr=$(date +%Y-%m-%d-%H%M)
+    local dest="${HOME}/${2:-$1}"
+    local dateStr=$(date +%Y-%m-%d-%H%M)
+    local src="${1}"
 
-    if [ $# -eq 1 ]; then
-        src="${1}"
-    elif [ $# -eq 2 ]; then
-        src="${1}"
-        dest="${2}"
-    else
+    if [ -z "$dotfilesDir" ]; then
+        echo "Error: dotfilesDir is not set."
+        return 1
+    fi
+
+    if [ $# -lt 1 ] || [ $# -gt 2 ]; then
         echo "Usage: linkDotfile [source_file] [destination_file (optional)]"
         return 1
     fi
@@ -254,7 +255,7 @@ setup_vi() {
 setup_zz() {
     mkdir -p ~/.command
     wget -O ~/.command/fzf-git.sh "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
-    linkDotfile ~/.command ~/.command/command
+    linkDotfile .command ~/.command/command
 }
 
 
