@@ -82,22 +82,42 @@ function create_smug_config {
 }
 
 function install_smug {
-
     if command -v smug &>/dev/null; then
-        echo "smug installed"
+        echo "smug already installed"
         return 0
     else
-        download_url=$(wget -qO- "${GITHUB_PROXY:-""}https://api.github.com/repos/ivaaaan/smug/releases/latest" \
-                        | grep browser_download_url \
-                        | grep Linux_x86 \
-                        | cut -d '"' -f4)
+        arch=$(uname -m)
 
-        curl -fL "$download_url" -o "$home_dir/smug_latest.tar.gz"
+        case $arch in
+            x86_64)
+                download_url=$(wget -qO- "${GITHUB_PROXY:-""}https://api.github.com/repos/ivaaaan/smug/releases/latest" \
+                                | grep browser_download_url \
+                                | grep Linux_x86_64 \
+                                | cut -d '"' -f4)
+                ;;
+            aarch64|arm64)
+                download_url=$(wget -qO- "${GITHUB_PROXY:-""}https://api.github.com/repos/ivaaaan/smug/releases/latest" \
+                                | grep browser_download_url \
+                                | grep Linux_arm64 \
+                                | cut -d '"' -f4)
+                ;;
+            *)
+                echo "Unsupported architecture: $arch"
+                return 1
+                ;;
+        esac
+
+        curl -fL "$download_url" -o "$HOME/smug_latest.tar.gz"
 
         if [ $? -eq 0 ]; then
-            tar -zxf "$HOME/smug_latest.tar.gz" -C "$home_dir" smug
-            echo "mv smug to /usr/local/bin"
-            sudo mv "$home_dir/smug" /usr/local/bin
+            tar -zxf "$HOME/smug_latest.tar.gz" -C "$HOME" smug
+            echo "Moving smug to /usr/local/bin"
+            sudo mv "$HOME/smug" /usr/local/bin
+
+            echo "Cleaning up installation files"
+            rm -f "$HOME/smug_latest.tar.gz"
+            rm -f "$HOME/smug"
+
             echo "smug installed successfully"
             create_smug_config
         else
