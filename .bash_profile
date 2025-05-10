@@ -1,12 +1,14 @@
 export EDITOR="vim"
 if [ "$TERM_PROGRAM" = "vscode" ]; then
+  if command -v cursor >/dev/null 2>&1; then
+    export EDITOR="cursor"
+  else
     export EDITOR="code"
+  fi
 else
-    if [ -n "$BASH_VERSION" ]; then
-      if [ -f ~/.bashrc ]; then
-          source ~/.bashrc
-      fi
-    fi
+  if [ -n "$BASH_VERSION" ] && [ -f ~/.bashrc ]; then
+    source ~/.bashrc
+  fi
 fi
 
 is_in_git_repo() {
@@ -102,10 +104,6 @@ fzf-down() {
   fi
 }
 
-shrug() {
-    echo -n "¯\_(ツ)_/¯" |clip.exe;
-}
-
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
 cu() { 
@@ -120,20 +118,6 @@ cu() {
 # backup file
 bak() {
   cp -rp "$@" "$@.bak"-`date +%Y%m%d`; echo "`date +%Y-%m-%d` backed up $PWD/$@";
-}
-
-so() {
-  s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*)
-  echo $s 2>&1 | clipcopy
-  echo $s
-  chrome "https://www.google.com/search?q=site:stackoverflow.com $s";
-}
-
-goo() {
-  s=$(/usr/bin/python3 /home/atcg/.deepl.py ZH EN $*) # Error
-  echo $s 2>&1 | clipcopy
-  echo $s
-  chrome "https://www.google.com/search?q=$s";
 }
 
 # Fast execution of commands
@@ -196,10 +180,6 @@ vzz() {
   fi
 }
 
-zb() {
-  cat ~/.browse|fzf;
-}
-
 hp() {
   python3 /home/dw/.hypothesis.py $1 | jq
 }
@@ -209,10 +189,6 @@ tmp-upload() {
     echo "curl -o $1 $download_url"
     echo "curl -o $1 $download_url" | clipcopy
     echo "The above command has been copied to clipboard."
-}
-
-todo() {
-    vi "$HOME/.todo.md"
 }
 
 # Functions for setting and unsetting proxy
@@ -283,16 +259,14 @@ vf() {
     fi
 
     if [ -d "$target_dir" ]; then
-        selected_file=$(find "$target_dir" -maxdepth "$max_depth" -type f | fzf --preview 'cat {}')
+        selected_file=$(find -L "$target_dir" -maxdepth "$max_depth" -type f | fzf --preview 'cat {}')
         if [ -n "$selected_file" ]; then
             $EDITOR "$selected_file"
         fi
     else
-        echo "目录 $target_dir 不存在或不可访问"
+        echo "Directory $target_dir does not exist or is not accessible"
     fi
 }
-
-##### learn python #####
 
 # print modules source file path
 pf() {
