@@ -231,9 +231,9 @@ function test {
 }
 
 linkDotfile() {
-    local dest="${HOME}/${2:-$1}"
-    local dateStr=$(date +%Y-%m-%d-%H%M)
     local src="${1}"
+    local dest="${2:-${HOME}/${1}}"
+    local dateStr=$(date +%Y-%m-%d-%H%M)
 
     if [ -z "$dotfilesDir" ]; then
         echo "Error: dotfilesDir is not set."
