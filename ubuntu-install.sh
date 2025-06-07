@@ -5,17 +5,9 @@ set -Eeuo pipefail
 script_path=$(readlink -f "$0")
 script_directory=$(dirname "$script_path")
 home_dir="$HOME"
-APT_UPDATE=1
 GITHUB_PROXY=""
 dotfilesDir=$(pwd)
 
-sed -i "s/^APT_UPDATE=.*/APT_UPDATE=1/" $script_path
-
-if [ "$APT_UPDATE" -eq 1 ]; then
-    :
-else
-    sudo apt update
-fi
 
 function is_package_installed {
     local package_name="$1"
@@ -40,6 +32,7 @@ function apt_install {
 
 }
 
+
 function install_fzf {
     if command -v fzf &>/dev/null; then
         echo "fzf installed"
@@ -52,11 +45,6 @@ function install_fzf {
 
 }
 
-function install_ohmyzsh {
-
-    sh -c "$(curl -fsSL ${GITHUB_PROXY:-""}https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-}
 
 function install_git_alias {
 
@@ -70,6 +58,7 @@ function install_git_alias {
 
 }
 
+
 function create_smug_config {
   home_dir=$(eval echo ~$USER)
 
@@ -80,6 +69,7 @@ function create_smug_config {
 
   echo "Configuration created successfully in $config_dir"
 }
+
 
 function install_smug {
     if command -v smug &>/dev/null; then
@@ -126,109 +116,6 @@ function install_smug {
     fi
 }
 
-function install_gh {
-    download_url=$(curl -s https://api.github.com/repos/cli/cli/releases/latest \
-    | grep browser_download_url \
-    | grep amd64.deb \
-    | cut -d '"' -f4)
-
-    curl -fL $download_url -o gh.deb
-    dpkg -i gh.deb
-    gh --version
-    rm gh.deb
-}
-
-function install_nvim {
-
-    if command -v nvim &>/dev/null; then
-        echo "nvim installed"
-        return 0
-
-    else
-        download_url=$(curl -s https://api.github.com/repos/neovim/neovim/releases\
-                        | grep browser_download_url \
-                        | grep stable \
-                        | grep linux \
-                        | head -n 1 \
-                        | cut -d '"' -f 4)
-
-        curl -fL "$download_url" -o "$home_dir/nvim.tar.gz"
-
-        if [ $? -eq 0 ]; then
-
-            echo "nvim installed successfully"
-
-            # install nvim-plug
-            sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-
-            sudo tar -zxf "$home_dir/nvim.tar.gz" -C "/usr/local" 
-            sudo ln -s /usr/local/nvim-linux64/bin/nvim /usr/local/bin
-
-            # link init.vim
-            mkdir -p "$HOME/.config/nvim"
-            ln "$script_directory/.vimrc" "$HOME/.config/nvim/init.vim"
-            vi +PlugInstall +qall
-            
-        else
-            echo "nvim installation failed"
-        fi
-    fi
-}
-
-function install_pyenv {
-
-    if command -v pyenv &>/dev/null; then
-        echo "pyenv installed"
-        return 0
-    else
-        # check_proxy
-        curl https://pyenv.run | bash
-    fi
-}
-
-function install_ipcalc {
-    curl https://raw.githubusercontent.com/kjokjo/ipcalc/master/ipcalc -o ipcalc
-    sudo ln ipcalc /usr/bin
-    rm ipcalc
-}
-
-function check_proxy {
-
-    if [ -n "$all_proxy" ]; then
-        echo "all_proxy环境变量已定义，值为: $all_proxy"
-    else
-        proxy
-    fi
-
-}
-
-function install_docker-compose {
-    echo "docker-compose install"
-    if command -v docker-compose &>/dev/null; then
-        echo "docker-compose installed"
-        return 0
-    else
-        download_url=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url | grep linux-x86_64 | cut -d '"')
-        curl -fL "$download_url" -o "$home_dir/docker-compose"
-        if [ $? -eq 0 ]; then
-            echo "docker-compose installed successfully"
-            chmod +x "$home_dir/docker-compose"
-            sudo mv "$home_dir/docker-compose" /usr/bin/docker-compose
-        else
-            echo "docker-compose installed failed"
-        fi
-    fi
-}
-
-function EXIT {
-    echo "exit"
-    exit 0
-}
-
-function test {
-    echo "this is test"
-}
 
 linkDotfile() {
     local src="${1}"
@@ -265,12 +152,14 @@ linkDotfile() {
     ln -s "${dotfilesDir}/${src}" "${dest}"
 }
 
+
 setup_vi() {
     mkdir -p ~/.vim/pack/tpope/start ~/.vim/pack/plugins/start
     git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git" ~/.vim/pack/tpope/start/vim-commentary
     vim -u NONE -c "helptags ~/.vim/pack/tpope/start/vim-commentary/doc" -c q
     git clone "${GITHUB_PROXY:-""}https://github.com/easymotion/vim-easymotion.git" ~/.vim/pack/plugins/start/vim-easymotion
 }
+
 
 setup_zz() {
     mkdir -p ~/.command
@@ -286,6 +175,7 @@ append_to_bashrc() {
 EOF
 }
 
+
 # Function to download z.sh and update .bashrc
 setup_z_jump() {
     local url="${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/refs/heads/master/z.sh"
@@ -298,6 +188,7 @@ EOF
         echo "Download z jump  failed."
     fi
 }
+
 
 install_github_deb() {
     repo=$1
@@ -329,6 +220,24 @@ install_github_deb() {
     echo "Installation completed."
 }
 
+install_uv() {
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh || {
+        echo "Failed to install uv."
+        return 1
+    }
+
+    export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
+    echo "Set UV_DEFAULT_INDEX for current session."
+
+    SHELL_RC="$HOME/.bashrc"
+    if ! grep -q 'UV_DEFAULT_INDEX' "$SHELL_RC"; then
+        echo 'export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"' >> "$SHELL_RC"
+        echo "Added UV_DEFAULT_INDEX to $SHELL_RC"
+    fi
+}
+
+
 ################
 # Link Dotfile #
 ################
@@ -343,6 +252,7 @@ install_github_deb() {
 # setup_vi
 # setup_zz
 # setup_z_jump
+install_uv
 
 
 ################
@@ -359,18 +269,5 @@ install_github_deb() {
 # install_fzf
 # install_git_alias
 # install_ipcalc
-# check_proxy
 # install_nvim
 # install_smug
-
-
-# IFS=$'\n'
-# result=""
-# for f in $(declare -F); do
-#    result="${result}${f:11}\n"
-# done
-
-# while true; do
-#     select_func=$(echo -e "$result" | fzf)
-#     eval "$select_func"
-# done
