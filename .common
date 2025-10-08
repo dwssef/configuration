@@ -5,6 +5,7 @@ alias l="ls"
 alias ll='ls -lh'
 alias la='ls -alh'
 
+alias va='vi ~/.alias'
 alias vc='vi $HOME/.common'
 alias vz="vi $HOME/.bashrc"
 alias vv="vi $HOME/.vimrc"

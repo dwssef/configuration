@@ -1,10 +1,6 @@
 export EDITOR="vim"
 if [ "$TERM_PROGRAM" = "vscode" ]; then
-  if command -v cursor >/dev/null 2>&1; then
-    export EDITOR="cursor"
-  else
-    export EDITOR="code"
-  fi
+  export EDITOR="code"
 else
   if [ -n "$BASH_VERSION" ] && [ -f ~/.bashrc ]; then
     source ~/.bashrc
@@ -220,8 +216,8 @@ proxy() {
     # Set proxy based on V2RAY_ENABLED flag
     local proxy_port socks_port http_port
     if [ "${V2RAY_ENABLED:-0}" -eq 1 ]; then
-        socks_port=10810
-        http_port=$((socks_port + 1))
+        socks_port=10808
+        http_port=10808
     else
         socks_port=17254
         http_port=17254
