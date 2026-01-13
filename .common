@@ -18,7 +18,7 @@ alias ports='netstat -tulanp'
 alias server='python3 -m http.server'
 
 alias dud='du -d 1 -h'
-alias cdf='cd "$(ls -d */ | fzf)"'
+alias cdf='cd "$(ls -d ./*/ | fzf)"'
 alias fzf="fzf --reverse -m -0"
 
 alias dps="docker ps -a"
