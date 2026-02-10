@@ -228,6 +228,8 @@ install_uv() {
     }
 
     export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
+    export UV_INSTALLER_GITHUB_BASE_URL="https://ghfast.top/https://github.com"
+    export UV_PYTHON_INSTALL_MIRROR="https://ghfast.top/https://github.com/astral-sh/python-build-standalone/releases/download"
     echo "Set UV_DEFAULT_INDEX for current session."
 
     SHELL_RC="$HOME/.bashrc"
