@@ -221,22 +221,31 @@ install_github_deb() {
 }
 
 install_uv() {
+    if command -v uv &>/dev/null; then
+        echo "uv already installed"
+        return 0
+    fi
+
     echo "Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh || {
         echo "Failed to install uv."
         return 1
     }
 
+    export PATH="$HOME/.local/bin:$PATH"
     export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
     export UV_INSTALLER_GITHUB_BASE_URL="https://ghfast.top/https://github.com"
     export UV_PYTHON_INSTALL_MIRROR="https://ghfast.top/https://github.com/astral-sh/python-build-standalone/releases/download"
-    echo "Set UV_DEFAULT_INDEX for current session."
 
     SHELL_RC="$HOME/.bashrc"
-    if ! grep -q 'UV_DEFAULT_INDEX' "$SHELL_RC"; then
-        echo 'export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"' >> "$SHELL_RC"
-        echo "Added UV_DEFAULT_INDEX to $SHELL_RC"
-    fi
+    {
+        echo 'export PATH="$HOME/.local/bin:$PATH"'
+        echo 'export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"'
+        echo 'export UV_INSTALLER_GITHUB_BASE_URL="https://ghfast.top/https://github.com"'
+        echo 'export UV_PYTHON_INSTALL_MIRROR="https://ghfast.top/https://github.com/astral-sh/python-build-standalone/releases/download"'
+    } >> "$SHELL_RC"
+
+    echo "uv installed and configured successfully."
 }
 
 
