@@ -8,6 +8,86 @@ home_dir="$HOME"
 GITHUB_PROXY=""
 dotfilesDir=$(pwd)
 
+# ========== 加载 .common 以获取 proxy 函数 ==========
+# 先设置必要的环境变量，避免 strict mode 报错
+export TERM_PROGRAM="${TERM_PROGRAM:-xterm-256color}"
+export TERM="${TERM:-xterm-256color}"
+
+# 保存传入的代理配置（优先级最高），避免被 .common 覆盖
+_SCRIPT_PROXY_HOST_IP="${PROXY_HOST_IP:-}"
+
+if [ -f "${dotfilesDir}/.common" ]; then
+    source "${dotfilesDir}/.common"
+fi
+
+
+# ========== 配置代理环境 ==========
+setup_proxy_env() {
+    local env_file="$HOME/.env"
+    
+    # 优先使用脚本传入的代理配置，否则从环境变量读取
+    local proxy_ip="${_SCRIPT_PROXY_HOST_IP:-${PROXY_HOST_IP:-}}"
+    
+    # 如果 .env 不存在，从 template 创建
+    if [ ! -f "$env_file" ]; then
+        cp "${dotfilesDir}/env.template" "$env_file"
+    fi
+    
+    # 加载代理配置
+    if [ -f "$env_file" ]; then
+        source "$env_file"
+    fi
+    
+    # 如果环境变量中有代理配置，使用它
+    if [ -n "$proxy_ip" ]; then
+        PROXY_HOST_IP="$proxy_ip"
+    fi
+    
+    # 如果仍未设置，提示用户
+    if [ -z "${PROXY_HOST_IP:-}" ]; then
+        echo ""
+        echo "=============================================="
+        echo "[Wait] Please enter PROXY_HOST_IP and press Enter..."
+        echo "=============================================="
+        read -r PROXY_HOST_IP
+        
+        if [ -z "${PROXY_HOST_IP:-}" ]; then
+            echo "[Warn] PROXY_HOST_IP not set, skipping proxy..."
+            return 1
+        fi
+        
+        # 保存到 ~/.env 文件（替换已有的 PROXY_HOST_IP）
+        if grep -q "PROXY_HOST_IP=" "$env_file" 2>/dev/null; then
+            sed -i "s|export PROXY_HOST_IP=.*|export PROXY_HOST_IP=$PROXY_HOST_IP|" "$env_file"
+        else
+            echo "export PROXY_HOST_IP=$PROXY_HOST_IP" >> "$env_file"
+        fi
+        echo "[Info] Saved PROXY_HOST_IP to $env_file"
+    fi
+    
+    # 启用代理
+    if command -v proxy &>/dev/null; then
+        # 先把代理IP写入 ~/.env，避免 proxy() 函数覆盖环境变量
+        if [ -n "${PROXY_HOST_IP:-}" ]; then
+            if grep -q "PROXY_HOST_IP=" "$env_file" 2>/dev/null; then
+                sed -i "s|export PROXY_HOST_IP=.*|export PROXY_HOST_IP=$PROXY_HOST_IP|" "$env_file"
+            else
+                echo "export PROXY_HOST_IP=$PROXY_HOST_IP" >> "$env_file"
+            fi
+        fi
+        
+        echo "[Auto] Enabling proxy..."
+        proxy
+        
+        # 验证代理是否生效
+        if curl -s --max-time 5 https://github.com &>/dev/null; then
+            echo "[OK] Proxy is working"
+        else
+            echo "[Warn] Proxy may not be working, continuing anyway..."
+        fi
+    fi
+}
+
 
 function is_package_installed {
     local package_name="$1"
@@ -37,9 +117,12 @@ function install_fzf {
     if command -v fzf &>/dev/null; then
         echo "fzf installed"
         return 0
+    elif [ -d ~/.fzf ]; then
+        echo "fzf directory exists, running install..."
+        ~/.fzf/install --all
     else
         git clone --depth 1 "${GITHUB_PROXY:-""}https://github.com/junegunn/fzf.git" ~/.fzf
-        ~/.fzf/install
+        ~/.fzf/install --all
 
     fi
 
@@ -155,15 +238,26 @@ linkDotfile() {
 
 setup_vi() {
     mkdir -p ~/.vim/pack/tpope/start ~/.vim/pack/plugins/start
-    git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git" ~/.vim/pack/tpope/start/vim-commentary
-    vim -u NONE -c "helptags ~/.vim/pack/tpope/start/vim-commentary/doc" -c q
-    git clone "${GITHUB_PROXY:-""}https://github.com/easymotion/vim-easymotion.git" ~/.vim/pack/plugins/start/vim-easymotion
+    
+    # vim-commentary
+    if [ -d ~/.vim/pack/tpope/start/vim-commentary ]; then
+        echo "vim-commentary already exists, skipping..."
+    else
+        git clone "${GITHUB_PROXY:-""}https://github.com/tpope/vim-commentary.git" ~/.vim/pack/tpope/start/vim-commentary
+        vim -u NONE -c "helptags ~/.vim/pack/tpope/start/vim-commentary/doc" -c q
+    fi
+    
+    # vim-easymotion
+    if [ -d ~/.vim/pack/plugins/start/vim-easymotion ]; then
+        echo "vim-easymotion already exists, skipping..."
+    else
+        git clone "${GITHUB_PROXY:-""}https://github.com/easymotion/vim-easymotion.git" ~/.vim/pack/plugins/start/vim-easymotion
+    fi
 }
 
 
 setup_zz() {
     mkdir -p ~/.command
-    wget -O ~/.command/fzf-git.sh "${GITHUB_PROXY:-""}https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
     linkDotfile .command ~/.command/command
 }
 
@@ -178,14 +272,23 @@ EOF
 
 # Function to download z.sh and update .bashrc
 setup_z_jump() {
-    local url="${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/refs/heads/master/z.sh"
-    if wget -q "$url" -O "$HOME/.z.sh"; then
-        echo "Download successful. Updating .bashrc..."
+    if [ -f "$HOME/.z.sh" ]; then
+        echo "z.sh already exists, skipping..."
+    else
+        local url="${GITHUB_PROXY:-""}https://raw.githubusercontent.com/rupa/z/refs/heads/master/z.sh"
+        if wget -q "$url" -O "$HOME/.z.sh"; then
+            echo "Download successful."
+        else
+            echo "Download z jump failed."
+            return 1
+        fi
+    fi
+    
+    # 确保 .bashrc 包含 source 语句
+    if ! grep -q "\.z\.sh" "$HOME/.bashrc" 2>/dev/null; then
         tee -a "$HOME/.bashrc" <<'EOF'
 [ -f ~/.z.sh ] && source ~/.z.sh
 EOF
-    else
-        echo "Download z jump  failed."
     fi
 }
 
@@ -253,17 +356,28 @@ install_uv() {
 # Link Dotfile #
 ################
 
-# linkDotfile .bash_profile ~/.bash_profile
-# linkDotfile .common ~/.common
-# cp env.template ~/.env
-# linkDotfile ~/.zshrc
-# linkDotfile .tmux.conf ~/.tmux.conf
-# linkDotfile vimrc.server ~/.vimrc
-# append_to_bashrc
-# setup_vi
-# setup_zz
-# setup_z_jump
-install_uv
+linkDotfile .bash_profile ~/.bash_profile
+linkDotfile .common ~/.common
+
+# 只在 .env 不存在时创建
+if [ ! -f "$HOME/.env" ]; then
+    cp env.template ~/.env
+fi
+
+linkDotfile .tmux.conf ~/.tmux.conf
+linkDotfile vimrc.server ~/.vimrc
+append_to_bashrc
+
+
+################
+# Setup Proxy & Network Operations
+################
+
+setup_proxy_env
+
+setup_vi
+setup_zz
+setup_z_jump
 
 
 ################
@@ -271,14 +385,17 @@ install_uv
 ################
 
 # install_docker-compose
-# apt_install tmux
+ apt_install tmux
 # apt_install zsh
 # install_github_deb "sharkdp/fd" "amd64.deb"
 # install_github_deb "BurntSushi/ripgrep" "amd64.deb"
 # apt_install bat # batcat
 # apt_install universal-ctags
-# install_fzf
-# install_git_alias
+ install_fzf
+ install_uv
+ install_git_alias
 # install_ipcalc
 # install_nvim
 # install_smug
+
+echo "[Done] All tasks completed!"
