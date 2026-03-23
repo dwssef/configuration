@@ -17,3 +17,5 @@ rg -l namedtuple | xargs wc -l | sort | awk '{print $2}'
 python3 -c "from rich import print;print(dir(__builtins__))"
 git config --global alias.clone-https '!f() { git clone https://gh-proxy.com/${1#https://}; }; f'
 wget -O .gitignore https://www.toptal.com/developers/gitignore/api/python
+pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+claude --dangerously-skip-permissions
