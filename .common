@@ -21,7 +21,7 @@ alias dud='du -d 1 -h'
 alias cdf='cd "$(ls -d ./*/ | fzf)"'
 alias fzf="fzf --reverse -m -0"
 
-alias dps="docker ps -a"
+alias dps='docker ps -a --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
 alias dmi="docker images -a"
 
 alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
