@@ -1,5 +1,9 @@
 export LANG="en_US.UTF-8"
 
+export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
+export UV_INSTALLER_GITHUB_BASE_URL="https://ghfast.top/https://github.com"
+export UV_PYTHON_INSTALL_MIRROR="https://ghfast.top/https://github.com/astral-sh/python-build-standalone/releases/download"
+
 # Alias
 alias l="ls"
 alias ll='ls -lh'
@@ -18,15 +22,21 @@ alias ports='netstat -tulanp'
 alias server='python3 -m http.server'
 
 alias dud='du -d 1 -h'
-alias cdf='cd "$(ls -d ./*/ | fzf)"'
+cdf() {
+    cd "$(ls -d ./*/ | fzf)"
+}
 alias fzf="fzf --reverse -m -0"
 
 alias dps='docker ps -a --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
 alias dmi="docker images -a"
 
-alias mkdate='mkdir "$(date)" | sed 's/[[:space:]]//g''
+mkdate() {
+    mkdir "$(date)" | sed 's/[[:space:]]//g'
+}
 
-alias gsize='function __gsize() { curl -s "https://api.github.com/repos/$1" | jq ".size" | numfmt --to=iec --from-unit=1024; }; __gsize'
+gsize() {
+    curl -s "https://api.github.com/repos/$1" | jq ".size" | numfmt --to=iec --from-unit=1024
+}
 
 alias proxy_test="curl -vv www.google.com"
 
@@ -52,66 +62,8 @@ hs() {
     history | vi -
 }
 
-h2d() { printf "%d\n" "$((16#$1))"; }
-
-d2h() { printf "%X\n" "$1"; }
-
-b2d() { printf "%d\n" "$((2#$1))"; }
-
-d2b() {
-    n=$1
-    r=""
-    while [ "$n" -gt 0 ]; do
-        r=$((n % 2))$r
-        n=$((n / 2))
-    done
-    echo "$r"
-}
-
-h2b() {
-    h2d "$1" | while read -r dec; do
-        d2b "$dec"
-    done
-}
-
-b2h() {
-    b2d "$1" | while read -r dec; do
-        d2h "$dec"
-    done
-}
-
-q() {
-    input="$1"
-    if [[ "$input" =~ ^0x[0-9a-fA-F]+$ ]]; then
-        base="16"
-        decimal=$(h2d "${input#0x}")
-    elif [[ "$input" =~ ^0[0-7]+$ ]]; then
-        base="8"
-        decimal=$((8#${input#0}))
-    elif [[ "$input" =~ ^[01]+$ ]]; then
-        base="2"
-        decimal=$(b2d "$input")
-    elif [[ "$input" =~ ^[0-9]+$ ]]; then
-        base="10"
-        decimal="$input"
-    else
-        echo "Invalid input"
-        return 1
-    fi
-
-    binary=$(d2b "$decimal")
-    hex=$(d2h "$decimal")
-    octal=$(printf "%o" "$decimal")
-
-    echo "Input: $input (base $base)"
-    echo "Decimal: $decimal"
-    echo "Binary: $binary"
-    echo "Octal: $octal"
-    echo "Hexadecimal: $hex"
-}
-
 # Fzf
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS='-m --height 50% --border'
 
 export EDITOR="vim"
@@ -189,7 +141,7 @@ fzf-down() {
   git branch | fzf | sed -e "s/* //g" | xargs -I {} git checkout {};
 }
 
-# fuzz find git log 
+# fuzz find git log
 ,gcs() {
   git log --oneline | fzf | grep -o -E "^[0-9a-z]+" | xargs -I {} git show {};
 }
@@ -208,13 +160,13 @@ fzf-down() {
   if [ -n "$selected" ]; then
     file_path=$(echo "$selected" | awk -F ':' '{print $1}')
     line_number=$(echo "$selected" | awk -F ':' '{print $2}')
-    vi "$file_path" "+$line_number" 
+    vi "$file_path" "+$line_number"
   fi
 }
 
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
-cu() { 
+cu() {
     local count="${1:-1}";
     local path="";
     for ((i = 1; i <= count; i++)); do
@@ -230,7 +182,13 @@ bak() {
 
 # Fast execution of commands
 command_dir=~/.command
-if [ -d "$command_dir" ] && ls "$command_dir"/*.sh &>/dev/null; then
+if [ -d "$command_dir" ]; then
+    # Enable nullglob for bash/zsh compatibility
+    if [[ -n ${ZSH_VERSION} ]]; then
+        setopt NULL_GLOB 2>/dev/null
+    else
+        shopt -s nullglob 2>/dev/null || true
+    fi
     for file in "$command_dir"/*.sh; do
         [ -r "$file" ] && source "$file"
     done
@@ -242,7 +200,7 @@ zz() {
     if [[ ! -n "$1" ]]; then
         local dir=$command_dir
     fi
-    
+
     if [[ ! -d "$dir" ]]; then
         echo "Directory '$dir' does not exist"
         return 1
@@ -378,7 +336,7 @@ vf() {
 
 # print modules source file path
 pf() {
-    python3 -c "import $1;print($1.__file__)" 
+    python3 -c "import $1;print($1.__file__)"
 }
 
 # search for code that contains this function
