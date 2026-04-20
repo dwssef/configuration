@@ -4,6 +4,13 @@ export UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
 export UV_INSTALLER_GITHUB_BASE_URL="https://ghfast.top/https://github.com"
 export UV_PYTHON_INSTALL_MIRROR="https://ghfast.top/https://github.com/astral-sh/python-build-standalone/releases/download"
 
+# Detect shell config file based on OS
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    export SHELL_CONFIG_FILE="$HOME/.zshrc"
+else
+    export SHELL_CONFIG_FILE="$HOME/.bashrc"
+fi
+
 # Alias
 alias l="ls"
 alias ll='ls -lh'
@@ -11,10 +18,10 @@ alias la='ls -alh'
 
 alias va='vi ~/.alias'
 alias vc='vi $HOME/.common'
-alias vz="vi $HOME/.bashrc"
+alias vz="vi $SHELL_CONFIG_FILE"
 alias vv="vi $HOME/.vimrc"
-alias vb="vi $HOME/.bash_profile"
-alias sz="source $HOME/.bashrc"
+alias vb='vi $HOME/.bash_profile'
+alias sz="source $SHELL_CONFIG_FILE"
 
 alias p='python3'
 alias pip="python3 -m pip"
