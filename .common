@@ -275,11 +275,13 @@ set_proxy() {
     export https_proxy="http://$host_ip:$http_port"
     export HTTP_PROXY="http://$host_ip:$http_port"
     export HTTPS_PROXY="http://$host_ip:$http_port"
+    export no_proxy="localhost,127.0.0.1,::1,192.168.0.0/16"
+    export NO_PROXY="$no_proxy"
     echo "Proxy set: SOCKS port $proxy_port, HTTP port $http_port"
 }
 
 unproxy() {
-    unset ALL_PROXY all_proxy http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+    unset ALL_PROXY all_proxy http_proxy https_proxy HTTP_PROXY HTTPS_PROXY no_proxy NO_PROXY
     echo "Proxy unset"
 }
 
