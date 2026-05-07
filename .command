@@ -19,3 +19,6 @@ git config --global alias.clone-https '!f() { git clone https://gh-proxy.com/${1
 wget -O .gitignore https://www.toptal.com/developers/gitignore/api/python
 pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
 claude --dangerously-skip-permissions
+pip config set global.index-url https://mirrors.ustc.edu.cn/pypi/simple/
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
